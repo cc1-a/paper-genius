@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Paper Genius</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css')}}">
+    {% block head %} {% endblock %}
+    
+    <style>
+        /* Custom Dropdown Styles to match Mech Theme */
+        .dropdown-menu-mech {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--accent);
+            border-radius: 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .dropdown-item {
+            color: var(--text-primary);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+        }
+        .dropdown-item:hover {
+            background-color: var(--accent);
+            color: #000;
+        }
+        .dropdown-divider {
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <div id="cyber-grid-background"></div>
+
+    <div id="loader-wrapper">
+        <div class="loader-content">
+            <div class="scifi-spinner"></div>
+            <h3>SYSTEM INITIALIZING...</h3>
+        </div>
+    </div>
+
+    <nav class="navbar-mech sticky-top">
+        <div class="mech-scan-line"></div>
+        <div class="mech-container">
+            
+            <a class="mech-brand" href="/">
+                <div class="mech-logo-box">
+                    <img src="{{ url_for('static', filename='icon.png')}}" alt="PG">
+                </div>
+                <div class="brand-info">
+                    <span class="brand-title">PAPER GENIUS</span>
+                    <span class="brand-status">SYSTEM ONLINE</span>
+                </div>
+            </a>
+
+            <ul class="mech-links" id="desktop-menu">
+                <li><a href="/" class="mech-item">HOME <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
+                <li><a href="/About" class="mech-item">ABOUT <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
+                <li><a href="/Shop" class="mech-item">SHOP <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
+
+                <li><a href="/Contact" class="mech-item">CONTACT <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
+                <li><a href="{{ url_for('ai.ai_interface') }}" class="mech-item" style="color: var(--accent);">GENIUS AI <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
+            </ul>
+
+            <div class="mech-controls">
+                
+                <a class="mech-btn" href="/Cart"><i class="fa fa-shopping-cart"></i></a>
+
+                {% if g.user %}
+                    <!-- DROPDOWN USER MENU -->
+                    <div class="mech-user-display dropdown">
+                        <a href="#" class="text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--text-primary); display: flex; flex-direction: column; align-items: flex-end; cursor: pointer;">
+                            <span class="user-label">USER:</span>
+                            <span class="user-value">{{ g.user.name }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-mech" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="/Profile"><i class="fas fa-user-circle me-2"></i> My Profile</a></li>
+                            <li><a class="dropdown-item" href="/MyOrders"><i class="fas fa-history me-2"></i> My Orders</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="fas fa-power-off me-2"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a class="mech-btn" href="/Login"><i class="fa fa-user"></i></a>
+                    <a class="mech-btn" href="/Register"><i class="fa fa-key"></i></a>
+                {% endif %}
+
+                <button class="mech-toggle" id="theme-toggle">
+                    <div class="toggle-track"><div class="toggle-switch"></div></div>
+                </button>
+
+                <button class="mech-btn mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="mech-mobile-menu" id="mobile-menu">
+            <a href="/" class="mech-mobile-link">HOME</a>
+            <a href="/About" class="mech-mobile-link">ABOUT</a>
+            <a href="/Shop" class="mech-mobile-link">SHOP</a>
+            <a href="{{ url_for('ai.ai_interface') }}" class="mech-mobile-link" style="color: var(--accent);">GENIUS AI</a>
+            
+            {% if g.user %}
+                <!-- Mobile User Links -->
+                <a href="/Profile" class="mech-mobile-link" style="color: var(--accent);">MY PROFILE</a>
+                <a href="/MyOrders" class="mech-mobile-link" style="color: var(--accent);">MY ORDERS</a>
+            {% endif %}
+            
+            <a href="/Contact" class="mech-mobile-link">CONTACT</a>
+        </div>
+    </nav>
+
+    {% block body %} {% endblock %}
+
+    <footer class="mech-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h2 class="h2">PAPER GENIUS</h2>
+                    <ul class="list-unstyled">
+                        <li><i class="fa fa-phone"></i> 0724786229</li>
+                        <li><i class="fa fa-envelope"></i> genius.paperss@gmail.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h2 class="h2">LINKS</h2>
+                    <ul class="list-unstyled">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/About">About</a></li>
+                        <li><a href="/Shop">Shop</a></li>                        
+                        <li><a href="/Contact">Contact</a></li>
+                        <li><a href="{{ url_for('ai.ai_interface') }}">Genius AI</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h2 class="h2">SOCIAL</h2>
+                    <a href="#" class="mech-btn" style="display:inline-flex; width:40px;"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="mech-btn" style="display:inline-flex; width:40px;"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="mech-copyright text-center">
+            <p>&copy; 2025 Paper Genius | Dev by Amodh Gunawardana</p>
+        </div>
+    </footer>
+
+    <script src="{{url_for('static',filename='js/jquery-1.11.0.min.js')}}"></script>
+    <script src="{{url_for('static',filename='js/bootstrap.bundle.min.js')}}"></script>
+    <script>
+        // Loader
+        window.onload = function() {
+            setTimeout(() => { document.getElementById('loader-wrapper').style.display = 'none'; }, 1500);
+        };
+
+        // Theme
+        const btn = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        if(localStorage.getItem('theme')) html.setAttribute('data-theme', localStorage.getItem('theme'));
+        
+        btn.addEventListener('click', () => {
+            let theme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        });
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

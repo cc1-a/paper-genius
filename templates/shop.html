@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block body %}
+    <div class="container">
+        <div class="mech-grid">
+            {% for item in items %}
+            <div class="mech-card">
+                <div class="mech-img-wrap">
+                    <!-- FIX: Check if image is a URL (Cloudinary) or local file -->
+                    {% if item.img.startswith('http') %}
+                        <img src="{{ item.img }}" alt="{{item.name}}">
+                    {% else %}
+                        <img src="{{ url_for('static', filename=item.img)}}" alt="{{item.name}}">
+                    {% endif %}
+                </div>
+                <div class="mech-body">
+                    <h4>{{item.name}}</h4>
+                    <form action="/Shop" method="POST" class="form_shop"> 
+                        <input name="item_id" type="text" value="{{item.id}}" hidden>
+                        <label class="mech-label text-start">Cover</label>
+                        <select name="cover_type" class="mech-input" required>
+                            <option value="" disabled selected>Select...</option>
+                            <option value="Custom">Custom</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Minimalistic">Minimalistic</option>
+                        </select>
+                        <div class="d-flex gap-2">
+                            <div class="w-50">
+                                <label class="mech-label text-start">From</label>
+                                <select name="selected_year_from" class="mech-input year-from-select" required>
+                                    <option value="" disabled selected>Select From</option>
+                                    {% for year in item.years_available.keys() %}
+                                        <option value="{{ year }}" >{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="w-50">
+                                <label class="mech-label text-start">To</label>
+                                <select name="selected_year_to" class="mech-input year-to-select" required>
+                                    <option value="" disabled selected>Select To</option>
+                                    {% for year in item.years_available.keys() %}
+                                        <option value="{{ year }}" >{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                        <button class="mech-action-btn" type="submit">ADD TO CART</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const forms = document.querySelectorAll(".form_shop");
+    forms.forEach(form => {
+        const fromSelect = form.querySelector(".year-from-select");
+        const toSelect = form.querySelector(".year-to-select");
+
+        fromSelect.addEventListener("change", () => {
+            const fromValue = fromSelect.value;
+            toSelect.value = "";
+            Array.from(toSelect.options).forEach(option => {
+                if (!option.value) return; 
+                option.disabled = option.value <= fromValue; 
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container py-5">
+    <div class="mech-panel">
+        <h2 class="text-center mb-4">PILOT PROFILE</h2>
+        
+        {% if success %}
+        <div class="alert alert-success">{{ success }}</div>
+        {% elif error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" id="profileUpdateForm">
+            <label class="mech-label">Full Name</label>
+            <input type="text" name="name" class="mech-input" value="{{ g.user.name }}" required>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="mech-label">Email (Read Only)</label>
+                    <input type="text" class="mech-input" value="{{ g.user.email }}" disabled style="opacity: 0.7;">
+                </div>
+                <div class="col-md-6">
+                    <label class="mech-label">Phone</label>
+                    
+                    <div class="input-group">
+                        <select id="countryCodeSelect" class="form-select" style="max-width: 110px; border-top-right-radius: 0; border-bottom-right-radius: 0; height: 38px;">
+                            <option value="+94" data-placeholder="7xxxxxxxx">🇱🇰 Sri Lanka (+94)</option>
+                            <option value="+91" data-placeholder="9xxxxxxxxx">🇮🇳 India (+91)</option>
+                            <option value="+1" data-placeholder="201xxxxxxx">🇺🇸 Canada/US (+1)</option>
+                            <option value="+44" data-placeholder="7xxxxxxxxx">🇬🇧 UK (+44)</option>
+                            <option value="+60" data-placeholder="1xxxxxxxxx">🇲🇾 Malaysia (+60)</option>
+                            <option value="+61" data-placeholder="4xxxxxxxxx">🇦🇺 Australia (+61)</option>
+                            <option value="">-- Other --</option>
+                        </select>
+                        
+                        <input type="tel" id="phoneNumberLocalInput" class="mech-input" placeholder="Local Number" required 
+                            style="border-top-left-radius: 0; border-bottom-left-radius: 0; flex-grow: 1;">
+                        
+                        <input type="hidden" name="number" id="phoneNumberCombinedInput" required>
+                    </div>
+                    <p id="phoneError" style="color: red; font-size: 0.85em; margin-top: 5px;"></p>
+                    
+                    <input type="hidden" id="currentFullNumber" value="{{ g.user.number }}">
+                </div>
+            </div>
+
+            <label class="mech-label">School</label>
+            <input type="text" name="school" class="mech-input" value="{{ g.user.school }}" required>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <label class="mech-label">Address</label>
+                    <input type="text" name="address" class="mech-input" value="{{ g.user.address }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="mech-label">Town</label>
+                    <input type="text" name="town" class="mech-input" value="{{ g.user.town }}" required>
+                </div>
+            </div>
+
+            <hr style="border-color: var(--accent);">
+            <label class="mech-label">Change Password (Optional)</label>
+            <input type="password" name="new_password" class="mech-input" placeholder="Leave blank to keep current">
+
+            <button type="submit" class="mech-action-btn">UPDATE DATA</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const codeSelect = document.getElementById('countryCodeSelect');
+    const localInput = document.getElementById('phoneNumberLocalInput');
+    const combinedInput = document.getElementById('phoneNumberCombinedInput');
+    const currentFullNumber = document.getElementById('currentFullNumber').value;
+    const phoneError = document.getElementById('phoneError');
+    const form = document.getElementById('profileUpdateForm');
+    
+    // Regex to match a country code starting with '+' followed by 1 to 4 digits
+    const countryCodeRegex = /^\+\d{1,4}/;
+    const localNumberRegex = /^[0-9]+$/;
+
+    // --- 1. FUNCTION TO PARSE AND PRE-FILL THE EXISTING NUMBER ---
+    function parseAndPrefillNumber(fullNumber) {
+        if (!fullNumber || fullNumber === 'None') return;
+
+        // Try to find the country code part
+        const match = fullNumber.match(countryCodeRegex);
+        
+        if (match) {
+            const code = match[0]; // e.g., +94
+            const local = fullNumber.substring(code.length); // e.g., 766226039
+
+            // Attempt to select the code in the dropdown
+            let codeFound = false;
+            for (let i = 0; i < codeSelect.options.length; i++) {
+                if (codeSelect.options[i].value === code) {
+                    codeSelect.value = code;
+                    codeFound = true;
+                    break;
+                }
+            }
+            // If code is not in the list, select the "-- Other --" option
+            if (!codeFound) {
+                codeSelect.value = '';
+            }
+            
+            // Set the local number part
+            localInput.value = local;
+        } else {
+            // Fallback: If no '+' or valid code is found, just put the whole number in local input
+            localInput.value = fullNumber;
+        }
+    }
+
+    // --- 2. FUNCTION TO COMBINE AND VALIDATE ---
+    function updateAndValidate() {
+        // 2a. Combine the number
+        const countryCode = codeSelect.value;
+        const localNumber = localInput.value.trim();
+        
+        // This is the number that Flask will receive: e.g., +947xxxxxxxx
+        combinedInput.value = countryCode + localNumber;
+        
+        // 2b. Update placeholder
+        const selectedOption = codeSelect.options[codeSelect.selectedIndex];
+        const placeholder = selectedOption.getAttribute('data-placeholder') || 'Local Phone Number';
+        localInput.placeholder = placeholder;
+
+        // 2c. Validation Logic (Same as before)
+        phoneError.textContent = '';
+        localInput.setCustomValidity("");
+        combinedInput.setCustomValidity("");
+
+        if (!countryCode) {
+            phoneError.textContent = 'Please select your country code.';
+            combinedInput.setCustomValidity("Country code required.");
+            return false;
+        }
+
+        if (!localNumber || !localNumberRegex.test(localNumber)) {
+            phoneError.textContent = 'Please enter a valid local phone number (digits only).';
+            combinedInput.setCustomValidity("Local number required.");
+            return false;
+        }
+        
+        // Specific length check for Sri Lanka (example)
+        if (countryCode === '+94') {
+            if (localNumber.length !== 9) {
+                phoneError.textContent = 'Sri Lankan numbers must be 9 digits (e.g., 7xxxxxxxx).';
+                combinedInput.setCustomValidity("Invalid SL number length.");
+                return false;
+            }
+        }
+        
+        phoneError.textContent = 'Ensure this is your active WhatsApp number.';
+        phoneError.style.color = 'green';
+        return true;
+    }
+
+    // --- 3. EXECUTION ---
+    
+    // 3a. On page load, parse the existing user number and pre-fill the inputs
+    parseAndPrefillNumber(currentFullNumber);
+
+    // 3b. Attach listeners for input changes
+    codeSelect.addEventListener('change', updateAndValidate);
+    localInput.addEventListener('input', updateAndValidate);
+    
+    // 3c. Final check on form submission
+    form.addEventListener('submit', function(event) {
+        updateAndValidate(); // Run final validation and combination
+        
+        if (combinedInput.getCustomValidity()) {
+            event.preventDefault(); // Stop form submission if validation fails
+            localInput.focus();
+        }
+    });
+
+    // Initial validation check to populate the hidden field
+    updateAndValidate();
+</script>
+{% endblock %}

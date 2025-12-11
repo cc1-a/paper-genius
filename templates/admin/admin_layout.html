@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1d4ed8',
+                        secondary: '#f97316',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+    <!-- ADMIN NAVIGATION BAR -->
+    <nav class="bg-white shadow-md border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <a href="{{ url_for('admin_dashboard') }}" class="text-2xl font-bold text-primary tracking-tight hover:text-blue-800 transition">
+                PAPER GENIUS <span class="text-gray-400 font-light">ADMIN</span>
+            </a>
+        </div>
+        <div class="flex items-center space-x-6">
+            <a href="{{ url_for('admin_dashboard') }}" class="text-gray-600 hover:text-primary font-medium transition">Inventory</a>
+            <a href="{{ url_for('admin_users') }}" class="text-gray-600 hover:text-primary font-medium transition">Users</a>
+            <!-- NEW LINK FOR ORDERS -->
+            <a href="{{ url_for('admin_orders') }}" class="text-gray-600 hover:text-primary font-medium transition">Orders</a>
+            
+            <a href="{{ url_for('logout') }}" class="text-red-500 hover:text-red-700 font-medium transition ml-4">Logout</a>
+        </div>
+    </nav>
+
+    <!-- PAGE CONTENT -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-gray-200 mt-auto py-6">
+        <div class="container mx-auto text-center text-gray-400 text-sm">
+            &copy; 2025 Paper Genius Admin Systems
+        </div>
+    </footer>
+
+</body>
+</html>

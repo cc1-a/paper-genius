@@ -1,0 +1,74 @@
+{% extends "admin/admin_layout.html" %}
+
+{% block title %}User Management{% endblock %}
+
+{% block content %}
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">👥 User Database</h1>
+        <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg">
+            Registered Users: <strong>{{ users|length }}</strong>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for user in users %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition duration-200 flex flex-col">
+            
+            <!-- HEADER: Name & Delete -->
+            <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800">{{ user.name }}</h3>
+                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">ID: {{ user.id }}</span>
+                </div>
+                
+                <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" onsubmit="return confirm('Delete user {{ user.name }}? This will also remove their cart data.');">
+                    <button type="submit" class="text-red-400 hover:text-red-600 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition" title="Delete User">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- DETAILS -->
+            <div class="space-y-3 text-sm text-gray-600 flex-grow">
+                <div class="flex justify-between border-b border-gray-50 pb-1">
+                    <span class="font-semibold text-gray-400">Email:</span>
+                    <span class="text-right text-gray-800">{{ user.email }}</span>
+                </div>
+                <div class="flex justify-between border-b border-gray-50 pb-1">
+                    <span class="font-semibold text-gray-400">Phone:</span>
+                    <span class="text-right text-gray-800">{{ user.number }}</span>
+                </div>
+                <div class="flex justify-between border-b border-gray-50 pb-1">
+                    <span class="font-semibold text-gray-400">School:</span>
+                    <span class="text-right text-gray-800">{{ user.school }}</span>
+                </div>
+                
+                <div class="mt-4 pt-2">
+                    <p class="text-xs text-gray-500 mb-1"><strong>Address:</strong></p>
+                    <p class="text-gray-700 bg-gray-50 p-2 rounded">{{ user.address }}, {{ user.town }}</p>
+                </div>
+
+                <div class="mt-4 pt-3 flex justify-between items-center">
+                    <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-xs font-bold uppercase tracking-wide">{{ user.level }}</span>
+                    <span class="text-xs text-gray-400">Joined: {{ user.date_joined.strftime('%Y-%m-%d') }}</span>
+                </div>
+            </div>
+
+            <!-- NEW: PASSWORD RESET SECTION -->
+            <div class="mt-6 pt-4 border-t border-gray-200">
+                <label class="text-xs font-bold text-gray-500 uppercase mb-2 block">Change Password</label>
+                <form action="{{ url_for('reset_user_password', user_id=user.id) }}" method="POST" class="flex gap-2">
+                    <input type="text" name="new_password" placeholder="New Password" required 
+                           class="flex-grow border border-gray-300 rounded px-3 py-1 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1 rounded transition">
+                        Update
+                    </button>
+                </form>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}

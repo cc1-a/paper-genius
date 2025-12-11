@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container py-5">
+    <div class="mech-panel" style="max-width: 400px;">
+        <h2 class="text-center mb-4">USER LOGIN</h2>
+        
+        <form method="post" action="/Login">
+            <label class="mech-label">Email</label>
+            <input type="email" name="Email" class="mech-input" required>
+            <label class="mech-label">Password</label>
+            <input type="password" name="Password" class="mech-input" required>
+            <button type="submit" class="mech-action-btn">LOG IN</button>
+        </form>
+        <p class="text-center mt-3"><a href="/Register">Create New Identity</a></p>
+        <p class="text-center " style="color: red;">{{error}}</p>
+    </div>
+</div>
+{% endblock %}

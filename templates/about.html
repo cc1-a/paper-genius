@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <!-- FontAwesome is already in base, but ensuring it's loaded -->
+{% endblock %}
+
+{% block body %}
+    
+    <!-- 1. HERO SECTION -->
+    <section class="mech-hero text-center">
+        <div class="container">
+            <h1 class="display-3 fw-bold mb-3">ABOUT US</h1>
+            <p class="lead mx-auto" style="max-width: 800px; color: var(--text-secondary);">
+                Welcome to <span class="text-success fw-bold">PAPER GENIUS</span>, your dedicated source for high-quality, essential resources for Edexcel qualifications.
+            </p>
+            <div class="mt-4">
+                <span class="badge bg-success p-2" style="font-family: 'Rajdhani', sans-serif; letter-spacing: 2px; color: #000;">MISSION: ACADEMIC EXCELLENCE</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. WHAT WE OFFER (Grid Layout) -->
+    <div class="container py-5">
+        <h2 class="text-center mb-5" style="font-family: 'Rajdhani', sans-serif; font-weight: 800; color: var(--text-primary);">TACTICAL RESOURCES</h2>
+        
+        <div class="row g-4">
+            
+            <!-- Card 1 -->
+            <div class="col-md-4">
+                <div class="mech-card h-100" style="width: 100%;">
+                    <div class="mech-body text-center p-4">
+                        <i class="fas fa-book-open fa-3x mb-4" style="color: var(--accent);"></i>
+                        <h3 class="h4 fw-bold">PAST PAPER BOOKS</h3>
+                        <p class="text-muted">
+                            We specialize in compiling up-to-date Edexcel past paper books (Pure Maths 1 & 2, etc.) covering <strong class="text-success">2019 - 2024</strong>. 
+                            <br><br>
+                            Starting from <strong class="text-success">LKR 1,600</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col-md-4">
+                <div class="mech-card h-100" style="width: 100%;">
+                    <div class="mech-body text-center p-4">
+                        <i class="fas fa-paint-brush fa-3x mb-4" style="color: var(--accent);"></i>
+                        <h3 class="h4 fw-bold">CUSTOM DESIGNS</h3>
+                        <p class="text-muted">
+                            Make your study materials uniquely yours! With our <strong class="text-success">Personalized Designs</strong> service, customize covers for Chemistry, Maths, and more with your name and inspiring art.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col-md-4">
+                <div class="mech-card h-100" style="width: 100%;">
+                    <div class="mech-body text-center p-4">
+                        <i class="fas fa-calculator fa-3x mb-4" style="color: var(--accent);"></i>
+                        <h3 class="h4 fw-bold">STUDY ESSENTIALS</h3>
+                        <p class="text-muted">
+                            We stock reliable scientific and graphical calculators like the <strong class="text-success">CASIO CLASSWIZ</strong> and <strong class="text-success">fx-991EX</strong>, alongside affordable textbooks.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 3. OUR COMMITMENT (Glass Panel) -->
+    <section class="container py-5">
+        <div class="glass-panel text-center">
+            <h2 class="mb-4">OUR COMMITMENT</h2>
+            <p class="lead mb-4" style="color: var(--text-primary);">
+                At Genius Papers, we believe effective preparation shouldn't break the bank. We combine <strong>affordability</strong> with <strong>high quality</strong> and <strong>personalization</strong> to create resources that truly support your learning journey.
+            </p>
+            <p class="mb-4" style="color: var(--text-secondary);">
+                Whether you need the latest past papers, a customized study guide, or the perfect calculator, we are here to help you succeed!
+            </p>
+            <a href="/Shop" class="btn-robotic mt-3">
+                BROWSE SELECTION <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 4. SERVICES ICONS -->
+    <div class="container py-5">
+        <div class="row text-center justify-content-center g-4">
+            <div class="col-md-3">
+                <div class="service-box h-100">
+                    <i class="fa fa-truck"></i>
+                    <h5 class="fw-bold mt-3" style="font-family: 'Rajdhani', sans-serif;">CASH ON DELIVERY</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="service-box h-100">
+                    <i class="fa fa-percent"></i>
+                    <h5 class="fw-bold mt-3" style="font-family: 'Rajdhani', sans-serif;">STUDENT PROMOS</h5>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="service-box h-100">
+                    <i class="fa fa-headset"></i>
+                    <h5 class="fw-bold mt-3" style="font-family: 'Rajdhani', sans-serif;">DEDICATED SUPPORT</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. PARTNERS (Styled for Dark Mode Visibility) -->
+    <section class="brand-section mt-5">
+        <div class="container text-center">
+            <h2 class="mb-5 text-success" style="font-family: 'Rajdhani', sans-serif; letter-spacing: 2px;">LOGISTICS PARTNERS</h2>
+            <div class="d-flex justify-content-center gap-5 flex-wrap align-items-center">
+                <!-- Using brand-img class ensures they invert colors in dark mode -->
+                <img class="brand-img" src="https://koombiyodelivery.lk/assets/img/logo.png" alt="Koombiyo" style="height:60px;">
+                <img class="brand-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1hYlVwG311wuPjfGuj3nqKRu8HuniAmTndg&s" alt="Domex" style="height:60px;">
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

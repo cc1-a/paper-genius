@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container py-5">
+    <div class="mech-panel">
+        <h2 class="text-center mb-4">ESTABLISH COMMS</h2>
+        {% if success %}
+        <div class="alert alert-success text-center">Transmission Successful. We will respond via WhatsApp shortly.</div>
+        {% endif %}
+        <form method="post">
+            <div class="row">
+                <div class="col-6">
+                    <label class="mech-label">Name</label>
+                    <input type="text" name="name" class="mech-input" required>
+                </div>
+                <div class="col-6">
+                    <label class="mech-label">Email</label>
+                    <input type="email" name="email" class="mech-input" required>
+                </div>
+            </div>
+            <label class="mech-label">Subject</label>
+            <input type="text" name="subject" class="mech-input" required>
+            <label class="mech-label">Message</label>
+            <textarea name="message" rows="5" class="mech-input" required></textarea>
+            <button class="mech-action-btn">TRANSMIT</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

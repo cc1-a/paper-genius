@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container py-5" style="margin-bottom: 100px;">
+    <h1 class="mb-5 text-center" style="font-family: 'Rajdhani', sans-serif; letter-spacing: 2px;">ORDER HISTORY</h1>
+    
+    {% if orders %}
+        <div class="d-flex flex-column gap-4">
+            {% for order in orders %}
+            <div class="mech-card" style="width: 100%; display: flex; flex-direction: column; padding: 0; overflow: hidden;">
+                
+                <!-- ORDER HEADER (ID, Date, Status) -->
+                <div class="p-3 d-flex justify-content-between align-items-center flex-wrap gap-2" 
+                     style="background: rgba(0,0,0,0.03); border-bottom: 1px solid var(--border-color);">
+                    <div>
+                        <span class="h5 mb-0 fw-bold" style="font-family: 'Rajdhani'">ORDER #{{ order.id }}</span>
+                        <div class="text-muted small">
+                            <i class="far fa-clock me-1"></i> {{ order.order_date.strftime('%Y-%m-%d @ %H:%M') }}
+                        </div>
+                    </div>
+                    
+                    <!-- Status Badges -->
+                    {% if order.status == 'Pending' %}
+                        <span class="badge bg-warning text-dark border border-warning">PENDING</span>
+                    {% elif order.status == 'Delivered' %}
+                        <span class="badge bg-success border border-success">COMPLETED</span>
+                    {% elif order.status == 'Processing' %}
+                        <span class="badge bg-info text-dark border border-info">PROCESSING</span>
+                    {% elif order.status == 'Cancelled' %}
+                        <span class="badge bg-danger border border-danger">CANCELLED</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ order.status }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- ORDER BODY (Items, Notes, Price) -->
+                <div class="p-4">
+                    <h6 class="text-success mb-2" style="font-family:'Rajdhani'; letter-spacing: 1px;">SUPPLY MANIFEST:</h6>
+                    <p class="text-muted mb-4" style="line-height: 1.6;">{{ order.order_items }}</p>
+
+                    {% if order.additional_info %}
+                    <div class="p-2 mb-3 rounded" style="background: rgba(var(--accent-rgb), 0.05); border-left: 3px solid var(--accent); font-size: 0.9rem;">
+                        <strong class="text-primary">Your Note:</strong> <span class="text-muted">{{ order.additional_info }}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-end align-items-center pt-3 border-top" style="border-color: var(--border-color) !important;">
+                        <span class="text-muted small text-uppercase me-3" style="letter-spacing: 1px;">Total Value</span>
+                        <span class="h3 text-success mb-0" style="font-family: 'Rajdhani'">LKR {{ "%.2f"|format(order.total_price) }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- EMPTY STATE -->
+        <div class="text-center py-5">
+            <div class="mb-3 opacity-25">
+                <i class="fas fa-box-open fa-5x" style="color: var(--text-secondary);"></i>
+            </div>
+            <h3 class="h4 text-muted">NO MISSIONS RECORDED</h3>
+            <p class="text-muted mb-4">You have not placed any orders yet.</p>
+            <a href="/Shop" class="mech-action-btn" style="width: auto; padding: 12px 40px; display: inline-block;">ACQUIRE RESOURCES</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

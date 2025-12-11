@@ -1,0 +1,81 @@
+{% extends "admin/admin_layout.html" %}
+{% block title %}Add New Item{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">➕ Add Inventory Item</h1>
+        <a href="{{ url_for('admin_dashboard') }}" class="text-gray-500 hover:text-gray-700">← Back to Dashboard</a>
+    </div>
+    <div class="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200 p-8">
+        <form action="{{ url_for('add_item') }}" method="POST" enctype="multipart/form-data">
+            <div class="grid grid-cols-1 gap-6 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Item Name</label>
+                    <input type="text" name="item_name" placeholder="e.g. Pure Mathematics 1" required 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Cover Image (Upload)</label>
+                    <input type="file" name="img_file" accept="image/*" required 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                    <div class="mt-2 text-sm text-gray-500">OR provide a direct URL below:</div>
+                    <input type="text" name="img_url" placeholder="https://..." 
+                        class="w-full px-4 py-2 mt-1 rounded-lg border border-gray-300">
+                </div>
+            </div>
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <label class="block text-lg font-medium text-gray-800">Available Years & Pages</label>
+                    <button type="button" id="add_year_btn" class="text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-100 transition">
+                        + Add Row
+                    </button>
+                </div>
+                <div id="years_container" class="space-y-3">
+                    <div class="flex gap-4 items-start year-pair">
+                        <div class="flex-grow">
+                            <input type="text" name="year_month[]" placeholder="Year (e.g. 2020 Jan)" required 
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary">
+                        </div>
+                        <div class="w-32">
+                            <input type="number" name="page_count[]" placeholder="Pages" required 
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary">
+                        </div>
+                        <div class="w-10"></div> 
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition transform hover:scale-[1.01]">
+                Save Item to Database
+            </button>
+        </form>
+    </div>
+</div>
+<template id="year_pair_template">
+    <div class="flex gap-4 items-start year-pair animate-fade-in-down">
+        <div class="flex-grow">
+            <input type="text" name="year_month[]" placeholder="Year (e.g. 2021 June)" required 
+                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary">
+        </div>
+        <div class="w-32">
+            <input type="number" name="page_count[]" placeholder="Pages" required 
+                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-primary">
+        </div>
+        <button type="button" class="remove-btn text-red-500 hover:text-red-700 p-2 w-10 flex justify-center items-center">
+            ✖
+        </button>
+    </div>
+</template>
+<script>
+    const container = document.getElementById('years_container');
+    const addButton = document.getElementById('add_year_btn');
+    const template = document.getElementById('year_pair_template');
+    addButton.addEventListener('click', function() {
+        const clone = template.content.cloneNode(true);
+        const removeBtn = clone.querySelector('.remove-btn');
+        container.appendChild(clone);
+        container.lastElementChild.querySelector('.remove-btn').addEventListener('click', function(e) {
+            e.target.closest('.year-pair').remove();
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genius AI | Paper Genius</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css')}}">
+    
+    <style>
+        .chat-wrapper {
+            max-width: 900px;
+            margin: 40px auto;
+            height: 75vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-interface {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        [data-theme="dark"] .chat-interface {
+            background: rgba(20, 20, 20, 0.9);
+        }
+
+        /* Header */
+        .chat-header {
+            padding: 15px 25px;
+            background: rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Message Area */
+        .chat-messages {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .chat-messages::-webkit-scrollbar { width: 8px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--border-color); }
+
+        /* Bubbles */
+        .message {
+            max-width: 80%;
+            padding: 15px 20px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+            line-height: 1.5;
+            font-size: 1rem;
+        }
+
+        /* User Bubble */
+        .message.user {
+            align-self: flex-end;
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--text-primary);
+            border-bottom-right-radius: 0;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+        }
+
+        /* AI Bubble */
+        .message.ai {
+            align-self: flex-start;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-top-left-radius: 0;
+        }
+        
+        .message.ai::before {
+            content: 'GENIUS AI // CORE';
+            position: absolute;
+            top: -20px;
+            left: 0;
+            font-size: 0.7rem;
+            color: var(--accent);
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Input Area */
+        .chat-input-area {
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Typing Indicator */
+        .typing {
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-left: 20px;
+            margin-bottom: 5px;
+            display: none;
+            font-family: 'Rajdhani', sans-serif;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+        .message.ai strong { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <!-- Inherit Base Navigation Wrapper -->
+    {% extends "base.html" %}
+
+    {% block body %}
+    <div class="chat-wrapper">
+        <div class="chat-interface">
+            <div class="chat-header">
+                <h3 style="margin:0; font-size: 1.5rem; font-family: 'Rajdhani', sans-serif; font-weight:800;">GENIUS AI</h3>
+                <div style="font-family: 'Rajdhani'; color: var(--accent);">STATUS: ONLINE</div>
+            </div>
+            
+            <div class="chat-messages" id="chat-box">
+                <!-- Welcome Message -->
+                <div class="message ai">
+                    <strong>GENIUS AI:</strong> Systems Online. I can assist you with Edexcel Past Paper information and pricing. I can access your cart or process orders(NO CHECKOUT). How may I help?
+                </div>
+            </div>
+
+            <div class="typing" id="typing-indicator">ANALYZING QUERY...</div>
+
+            <div class="chat-input-area">
+                <input type="text" id="user-input" class="mech-input" placeholder="Ask about Edexcel papers..." style="margin-bottom: 0;">
+                <button class="mech-btn" id="send-btn" style="width: 60px; height: auto;">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        function appendMessage(text, sender) {
+            const div = document.createElement('div');
+            div.classList.add('message', sender);
+            div.innerHTML = text.replace(/\n/g, '<br>');
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            appendMessage(message, 'user');
+            userInput.value = '';
+            
+            typingIndicator.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+
+                typingIndicator.style.display = 'none';
+
+                if (data.error) {
+                    appendMessage("Error: " + data.error, 'ai');
+                } else {
+                    let formattedText = data.response
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>');
+                    
+                    appendMessage(formattedText, 'ai');
+                }
+
+            } catch (error) {
+                typingIndicator.style.display = 'none';
+                appendMessage("CRITICAL ERROR: Connection to Genius Core severed.", 'ai');
+                console.error(error);
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

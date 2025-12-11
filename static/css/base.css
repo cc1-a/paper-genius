@@ -1,0 +1,548 @@
+/* =========================================
+   1. FONTS & VARIABLES (THE BRAIN)
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700;800&family=Space+Grotesk:wght@300;500;700&display=swap');
+
+:root {
+    /* Light Mode (The Lab) */
+    --bg-primary: #f4f7f6;
+    --bg-secondary: #ffffff;
+    --text-primary: #0a0a0a;
+    --text-secondary: #555555;
+    --accent: #00d2ff; /* Cyber Blue */
+    --accent-glow: rgba(0, 210, 255, 0.4);
+    --border-color: rgba(0, 0, 0, 0.1);
+    --glass: rgba(255, 255, 255, 0.95);
+    --input-bg: #f8f9fa;
+    --nav-bg: #ffffff;
+}
+
+[data-theme="dark"] {
+    /* Dark Mode (The Matrix) */
+    --bg-primary: #050505;
+    --bg-secondary: #111111;
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --accent: #00f3ff; /* Neon Cyan */
+    --accent-glow: rgba(0, 243, 255, 0.6);
+    --border-color: rgba(255, 255, 255, 0.15);
+    --glass: rgba(20, 20, 20, 0.9);
+    --input-bg: #1a1a1a;
+    --nav-bg: #0a0a0a;
+}
+
+/* =========================================
+   2. GLOBAL RESET & DARK MODE GRID
+   ========================================= */
+body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: background-color 0.3s ease;
+    overflow-x: hidden;
+}
+
+/* Background Grid Container */
+#cyber-grid-background {
+    display: none;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -2; pointer-events: none;
+}
+
+[data-theme="dark"] #cyber-grid-background {
+    display: block;
+    background-color: #050505;
+    background-image: 
+        linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridScroll 20s linear infinite;
+}
+[data-theme="dark"] #cyber-grid-background::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, transparent 20%, #050505 90%);
+}
+@keyframes gridScroll { 0% { transform: perspective(500px) rotateX(5deg) translateY(0); } 100% { transform: perspective(500px) rotateX(5deg) translateY(50px); } }
+
+/* Typography */
+h1, h2, h3, h4, .h1, .h2, .h3, .navbar-brand {
+    font-family: 'Rajdhani', sans-serif !important;
+    text-transform: uppercase;
+    font-weight: 800 !important;
+    letter-spacing: 1px;
+    color: var(--text-primary) !important;
+}
+a { text-decoration: none !important; transition: 0.2s ease; }
+a:hover { color: var(--accent) !important; }
+
+/* Utilities */
+.text-success { color: var(--accent) !important; }
+.bg-success { background: var(--accent) !important; color: #000 !important; }
+.text-muted { color: var(--text-secondary) !important; }
+
+/* =========================================
+   3. CYBER-MECH NAVBAR
+   ========================================= */
+.navbar-mech {
+    background-color: var(--nav-bg);
+    height: 90px; position: sticky; top: 0; z-index: 1000;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    display: flex; align-items: center; transition: background-color 0.3s ease;
+}
+[data-theme="dark"] .navbar-mech {
+    background-color: #050505; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.mech-container {
+    width: 100%; max-width: 1500px; margin: 0 auto; padding: 0 40px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.mech-scan-line {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
+    background: rgba(255, 255, 255, 0.05); overflow: hidden;
+}
+.mech-scan-line::after {
+    content: ''; position: absolute; top: 0; left: -20%; width: 20%; height: 100%;
+    background: var(--accent); box-shadow: 0 0 15px var(--accent);
+    animation: scannerMove 4s ease-in-out infinite;
+}
+@keyframes scannerMove { 0% { left: -20%; width: 20%; opacity: 0.5; } 50% { width: 50%; opacity: 1; } 100% { left: 100%; width: 20%; opacity: 0.5; } }
+
+/* Logo */
+.mech-brand { display: flex; align-items: center; gap: 15px; }
+.mech-logo-box {
+    position: relative; width: 50px; height: 50px; background: #fff;
+    border: 1px solid black ;
+    border-radius: 100%;
+    display: flex; align-items: center; justify-content: center; padding: 2px;
+    overflow: hidden;
+}
+.mech-logo-box img { width: 30px; height: 30px; object-fit: contain; }
+.brand-title { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 1.8rem; color: var(--text-primary); }
+.brand-status { font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; color: var(--accent); letter-spacing: 2px; display: block; }
+
+/* Links */
+.mech-links { display: flex; gap: 10px; list-style: none; margin: 0; padding: 0; position: absolute; left: 50%; transform: translateX(-50%); }
+.mech-item {
+    position: relative; padding: 10px 20px; color: var(--text-secondary);
+    font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.1rem;
+    text-transform: uppercase; transition: color 0.2s ease;
+}
+.reticle {
+    position: absolute; width: 8px; height: 8px; border-color: var(--accent);
+    border-style: solid; opacity: 0; transition: 0.2s;
+}
+.top-left { top: 0; left: 0; border-width: 2px 0 0 2px; transform: translate(5px, 5px); }
+.bottom-right { bottom: 0; right: 0; border-width: 0 2px 2px 0; transform: translate(-5px, -5px); }
+.mech-item:hover { color: var(--accent); background: rgba(0, 210, 255, 0.05); }
+.mech-item:hover .reticle { opacity: 1; transform: translate(0, 0); }
+
+/* Controls */
+.mech-controls { display: flex; align-items: center; gap: 15px; }
+.mech-btn {
+    width: 40px; height: 40px; border: 1px solid var(--border-color);
+    background: transparent; color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    transform: skewX(-10deg); transition: 0.3s;
+}
+.mech-btn i { transform: skewX(10deg); }
+.mech-btn:hover { background: var(--accent); border-color: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+.mech-user-display { display: flex; flex-direction: column; text-align: right; margin-right: 10px; border-right: 2px solid var(--accent); padding-right: 10px; }
+.user-label { font-size: 0.6rem; color: var(--text-secondary); }
+.user-value { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); font-family: 'Rajdhani', sans-serif; }
+
+/* Toggle */
+.mech-toggle { background: transparent; border: none; cursor: pointer; padding: 0; }
+.toggle-track {
+    width: 45px; height: 24px; background: #222; border: 1px solid #444;
+    border-radius: 2px; position: relative; transition: 0.3s;
+}
+.toggle-switch {
+    width: 18px; height: 18px; background: #555; position: absolute;
+    top: 2px; left: 2px; transition: 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+[data-theme="dark"] .toggle-track { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+[data-theme="dark"] .toggle-switch { background: var(--accent); left: 23px; box-shadow: 0 0 5px var(--accent); }
+
+/* Media Query */
+@media (max-width: 991px) { .mech-links { display: none; } }
+
+/* =========================================
+   4. ROBOTIC CARDS (MECH-CARD) - FIXED
+   ========================================= */
+.mech-grid {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; padding: 40px 0;
+}
+
+.mech-card {
+    background: var(--glass); 
+    border: 1px solid var(--border-color);
+    width: 320px; 
+    position: relative; 
+    overflow: hidden;
+    transition: 0.3s; 
+    backdrop-filter: blur(10px);
+    z-index: 1; /* Ensures card stacking context */
+}
+
+/* Corner Accents */
+.mech-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 15px; height: 15px;
+    border-top: 2px solid var(--accent); border-left: 2px solid var(--accent);
+    transition: 0.3s;
+    pointer-events: none; /* <--- CRITICAL FIX: Allows clicks to pass through */
+    z-index: 2;
+}
+
+.mech-card::after {
+    content: ''; position: absolute; bottom: 0; right: 0; width: 15px; height: 15px;
+    border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent);
+    transition: 0.3s;
+    pointer-events: none; /* <--- CRITICAL FIX: Allows clicks to pass through */
+    z-index: 2;
+}
+
+/* Hover Effects */
+.mech-card:hover { 
+    transform: translateY(-5px); 
+    box-shadow: 0 10px 40px var(--accent-glow); 
+    border-color: var(--accent); 
+}
+
+.mech-card:hover::before, .mech-card:hover::after { 
+    width: 100%; 
+    height: 100%; 
+    opacity: 0.1; 
+    background: var(--accent); 
+    border: none; 
+}
+
+/* Image Area */
+.mech-img-wrap {
+    width: 100%; 
+    height: 280px; 
+    background: #fff;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    border-bottom: 1px solid var(--border-color); 
+    padding: 20px;
+    position: relative;
+    z-index: 3; /* Ensures image is clickable if needed */
+}
+
+.mech-img-wrap img { 
+    max-width: 100%; 
+    max-height: 100%; 
+    object-fit: contain; 
+}
+
+/* Body Area */
+.mech-body { 
+    padding: 20px; 
+    text-align: center; 
+    position: relative;
+    z-index: 5; /* Ensures Form is ABOVE the animation overlay */
+}
+
+.mech-price { 
+    color: var(--accent); 
+    font-weight: 700; 
+    font-size: 1.2rem; 
+}
+
+/* =========================================
+   5. MECH FORMS & INPUTS
+   ========================================= */
+.mech-panel {
+    background: var(--glass); border: 1px solid var(--border-color);
+    padding: 40px; margin: 40px auto; max-width: 600px;
+    position: relative; backdrop-filter: blur(15px);
+}
+.mech-panel::top { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--accent); }
+
+.mech-input {
+    width: 100%; background: var(--input-bg); border: 1px solid var(--border-color);
+    color: var(--text-primary); padding: 12px; margin-bottom: 15px;
+    font-family: 'Space Grotesk', sans-serif; transition: 0.3s;
+}
+.mech-input:focus {
+    border-color: var(--accent); outline: none; box-shadow: 0 0 10px var(--accent-glow);
+}
+.mech-label {
+    display: block; font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    color: var(--text-secondary); margin-bottom: 5px; text-transform: uppercase;
+}
+
+/* Action Button */
+.mech-action-btn {
+    width: 100%; background: transparent; border: 2px solid var(--accent);
+    color: var(--accent); font-family: 'Rajdhani', sans-serif; font-weight: 800;
+    text-transform: uppercase; padding: 12px; letter-spacing: 2px;
+    cursor: pointer; transition: 0.3s; margin-top: 10px;
+}
+.mech-action-btn:hover {
+    background: var(--accent); color: #000; box-shadow: 0 0 25px var(--accent-glow);
+}
+
+/* =========================================
+   6. PAGES SPECIFIC
+   ========================================= */
+/* Hero */
+.mech-hero { padding: 100px 0; text-align: center; }
+.mech-hero h1 { font-size: 4rem; text-shadow: 2px 2px 0px var(--accent); }
+
+/* About Services */
+.service-box {
+    text-align: center; padding: 30px; border: 1px solid var(--border-color);
+    background: var(--glass); transition: 0.3s;
+}
+.service-box i { font-size: 2.5rem; color: var(--accent); margin-bottom: 20px; }
+.service-box:hover { border-color: var(--accent); transform: scale(1.05); }
+
+/* Brands */
+[data-theme="dark"] .brand-img { filter: invert(1) brightness(200%); opacity: 0.8; }
+
+/* Cart */
+.cart-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--glass); border: 1px solid var(--border-color);
+    padding: 20px; margin-bottom: 15px;
+}
+.cart-img { width: 80px; height: 100px; object-fit: contain; background: #fff; margin-right: 20px; }
+.cart-bar {
+    position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg-secondary);
+    border-top: 2px solid var(--accent); padding: 20px; display: flex; justify-content: flex-end; gap: 30px; align-items: center;
+}
+
+/* Footer */
+.mech-footer {
+    background-color: var(--bg-secondary); border-top: 1px solid var(--border-color);
+    padding-top: 60px; margin-top: 100px;
+}
+.mech-footer .h2 { color: var(--accent) !important; border-bottom: 2px solid var(--accent); padding-bottom: 10px; display: inline-block; }
+.mech-footer a { color: var(--text-secondary); }
+.mech-footer a:hover { color: var(--accent); padding-left: 5px; }
+.mech-copyright { background: var(--nav-bg); padding: 20px 0; margin-top: 40px; border-top: 1px solid var(--border-color); }
+
+/* =========================================
+   7. LOADER
+   ========================================= */
+#loader-wrapper {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; z-index: 99999; display: flex; justify-content: center; align-items: center;
+}
+.loader-content { text-align: center; color: var(--accent); font-family: 'Rajdhani', sans-serif; }
+.scifi-spinner {
+    width: 60px; height: 60px; border: 3px solid transparent; border-top: 3px solid var(--accent);
+    border-radius: 50%; animation: spin 1s infinite linear; margin: 0 auto 20px; box-shadow: 0 0 15px var(--accent);
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+
+/* ... existing CSS ... */
+
+/* Mobile Menu Toggle Button (New Style) */
+.mech-menu-toggle {
+    /* Reuses the existing mech-btn styles for a consistent look */
+    width: 40px; height: 40px; border: 1px solid var(--border-color);
+    background: transparent; color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    transform: skewX(-10deg); transition: 0.3s;
+    cursor: pointer; 
+    z-index: 1001; /* Above other content */
+}
+.mech-menu-toggle i { transform: skewX(10deg); font-size: 1.2rem; }
+.mech-menu-toggle:hover { background: var(--accent); border-color: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+
+/* Links */
+.mech-links { 
+    display: flex; 
+    gap: 10px; 
+    list-style: none; 
+    margin: 0; 
+    padding: 0; 
+    position: absolute; 
+    left: 50%; 
+    transform: translateX(-50%); 
+}
+
+/* ⭐ NEW: Mobile Menu Styles */
+@media (max-width: 991px) { 
+    /* Hide the desktop links by default */
+    .mech-links { display: none; } 
+    
+    .mech-mobile-menu.active {
+        display: flex;
+        flex-direction: column;
+        position: fixed; /* Overlay the entire screen */
+        top: 90px; /* Below the navbar */
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: var(--nav-bg); /* Use navbar background for consistency */
+        border-top: 2px solid var(--accent);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        z-index: 999; /* Below the fixed navbar */
+        padding: 20px 0;
+        transform: translateX(0); /* Override the desktop transform */
+        /* Optionally add animation for smooth opening */
+        animation: fadeInSlide 0.3s ease-out forwards;
+    }
+
+    .mech-mobile-menu li {
+        width: 100%;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .mech-mobile-menu .mech-item {
+        display: block;
+        padding: 15px 30px;
+        text-align: center;
+        width: 100%;
+        font-size: 1.3rem; /* Larger for touch targets */
+    }
+
+    /* Remove horizontal alignment for mobile links */
+    .mech-links.mech-mobile-menu {
+        position: fixed; 
+        left: 0;
+        transform: none;
+    }
+}
+/* Optional: Simple slide animation for mobile menu */
+@keyframes fadeInSlide {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Controls */
+/* ... existing CSS for .mech-controls ... */
+
+/* Update existing media query to ensure the button is visible and links are hidden */
+@media (max-width: 991px) { 
+    .mech-links:not(.mech-mobile-menu.active) { 
+        display: none; /* Keep desktop links hidden unless 'active' */
+    } 
+    /* Adjust controls to align correctly when menu button is present */
+    .mech-controls {
+        order: 3; /* Push controls to the right on mobile if needed */
+    }
+}
+/* =========================================
+   8. RESPONSIVE / MOBILE OPTIMIZATIONS
+   ========================================= */
+
+/* Default: Hide Mobile Elements on Desktop */
+.mobile-menu-btn { display: none !important; }
+.mech-mobile-menu { display: none; }
+
+/* --- MOBILE STYLES (Max Width 991px) --- */
+@media (max-width: 991px) {
+    
+    /* 1. Navbar Adjustments */
+    .navbar-mech {
+        padding: 0 10px; /* Reduce padding to fit items */
+        height: 80px; /* Slightly smaller height */
+    }
+
+    .mech-container {
+        padding: 0 10px; /* Tighten container */
+    }
+
+    /* 2. Hide Desktop Links */
+    #desktop-menu { display: none; }
+
+    /* 3. Show Mobile Hamburger */
+    .mobile-menu-btn { display: flex !important; margin-left: 10px; }
+
+    /* 4. Brand Adjustments (Save space) */
+    .brand-status { display: none; } /* Hide "SYSTEM ONLINE" text */
+    .brand-title { font-size: 1.2rem; } /* Smaller Title */
+    .mech-logo-box { width: 40px; height: 40px; } /* Smaller Logo */
+    .mech-logo-box img { width: 20px; height: 20px; }
+
+    /* 5. Controls Adjustments (Fit icons) */
+    .mech-controls { gap: 8px; } /* Tighter gap */
+    
+    .mech-user-display { 
+        display: none; /* Hide User Name text on mobile to save space */
+    }
+    
+    .mech-btn {
+        width: 35px; height: 35px; /* Slightly smaller buttons */
+        font-size: 1rem;
+    }
+
+    /* 6. The Mobile Dropdown Menu */
+    .mech-mobile-menu {
+        display: block;
+        position: absolute;
+        top: 80px; /* Below navbar */
+        left: 0;
+        width: 100%;
+        background-color: var(--nav-bg);
+        border-bottom: 2px solid var(--accent);
+        transform: translateY(-150%); /* Hidden Upwards */
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: 999;
+        padding: 20px 0;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .mech-mobile-menu.active {
+        transform: translateY(0); /* Slide Down */
+    }
+
+    .mech-mobile-link {
+        display: block;
+        text-align: center;
+        padding: 15px;
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--text-primary);
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--border-color);
+        transition: 0.2s;
+    }
+
+    .mech-mobile-link:hover {
+        background: var(--accent);
+        color: #000;
+    }
+}
+
+/* ... existing CSS ... */
+
+/* =========================================
+   9. MOBILE CHECKOUT FIX (Task 2)
+   ========================================= */
+@media (max-width: 768px) {
+    .cart-bar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+        text-align: center;
+        height: auto; /* Allow height to grow */
+    }
+
+    .cart-bar .h4 {
+        font-size: 1rem;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .cart-bar button {
+        width: 100%;
+        margin-top: 5px;
+        padding: 15px;
+    }
+    
+    /* Ensure content doesn't get hidden behind the taller fixed bar */
+    .container.py-5 {
+        margin-bottom: 180px !important; 
+    }
+}

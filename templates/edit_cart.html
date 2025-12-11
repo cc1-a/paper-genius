@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container py-5">
+    <div class="mech-panel">
+        <h2 class="text-center mb-4">MODIFY LOADOUT</h2>
+        
+        <div class="text-center mb-4">
+            <h4 class="text-success">{{ cart_item.name }}</h4>
+            <p class="text-muted">Current: {{ cart_item.selected_years[0] }} - {{ cart_item.selected_years[-1] }} ({{ cart_item.design_type }})</p>
+        </div>
+
+        <form method="POST">
+            <label class="mech-label">Cover Design</label>
+            <select name="cover_type" class="mech-input" required>
+                <option value="Normal" {% if cart_item.design_type == 'Normal' %}selected{% endif %}>Normal</option>
+                <option value="Custom" {% if cart_item.design_type == 'Custom' %}selected{% endif %}>Custom</option>
+                <option value="Minimalistic" {% if cart_item.design_type == 'Minimalistic' %}selected{% endif %}>Minimalistic</option>
+            </select>
+
+            <div class="d-flex gap-2">
+                <div class="w-50">
+                    <label class="mech-label">From Year</label>
+                    <select name="selected_year_from" class="mech-input year-from-select" required>
+                        {% for year in cart_item.years_available.keys()|sort %}
+                            <option value="{{ year }}" {% if year == cart_item.selected_years[0] %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="w-50">
+                    <label class="mech-label">To Year</label>
+                    <select name="selected_year_to" class="mech-input year-to-select" required>
+                        {% for year in cart_item.years_available.keys()|sort %}
+                            <option value="{{ year }}" {% if year == cart_item.selected_years[-1] %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3 mt-3">
+                <button type="submit" class="mech-action-btn">SAVE CHANGES</button>
+                <a href="/Cart" class="mech-action-btn text-center" style="border-color: #555; color: #aaa;">CANCEL</a>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Reusing script from shop to handle date logic -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const fromSelect = document.querySelector(".year-from-select");
+    const toSelect = document.querySelector(".year-to-select");
+
+    fromSelect.addEventListener("change", () => {
+        const fromValue = parseInt(fromSelect.value);
+        Array.from(toSelect.options).forEach(option => {
+            if (!option.value) return; 
+            if (parseInt(option.value) < fromValue) {
+                option.disabled = true; option.style.color = '#555';
+            } else {
+                option.disabled = false; option.style.color = 'var(--text-primary)';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    /* --- MOBILE RESPONSIVE FIXES --- */
+    @media (max-width: 768px) {
+        /* Stack Cart Item Content */
+        .cart-item {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            padding: 15px !important;
+        }
+
+        /* Top Section: Image & Text */
+        .cart-item-top {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding-bottom: 10px;
+        }
+        /* Dark mode border fix */
+        [data-theme="dark"] .cart-item-top {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Bottom Section: Controls & Price */
+        .cart-item-bottom {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Adjust Font Sizes */
+        .cart-item h3 { font-size: 1.1rem !important; margin-bottom: 2px; }
+        .cart-item small { font-size: 0.8rem; }
+        .cart-item .h4 { font-size: 1.2rem !important; }
+
+        /* Checkout Bar Fixes */
+        .cart-bar {
+            flex-direction: column;
+            height: auto;
+            padding: 20px;
+            gap: 15px;
+        }
+        .cart-bar .h4 {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            margin: 0;
+        }
+        .cart-bar button {
+            width: 100% !important;
+            padding: 15px;
+        }
+        
+        /* Make space for the taller bottom bar */
+        .container.py-5 {
+            margin-bottom: 220px !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-5" style="margin-bottom: 100px;">
+    <h1 class="mb-4">CART</h1>
+    
+    <form id="checkout-form" action="/Checkout" method="POST">
+        {% for item in cart %}
+        <div class="cart-item" data-price="{{ item.price }}">
+            
+            <!-- LEFT SIDE (Desktop) / TOP (Mobile) -->
+            <div class="cart-item-top d-flex align-items-center flex-grow-1">
+                
+                <!-- IMAGE FIX FOR CLOUDINARY vs LOCAL -->
+                {% if item.img.startswith('http') %}
+                    <img src="{{ item.img }}" class="cart-img" onerror="this.src='https://placehold.co/80'" style="object-fit:cover;">
+                {% else %}
+                    <img src="{{ url_for('static', filename=item.img)}}" class="cart-img" onerror="this.src='https://placehold.co/80'" style="object-fit:cover;">
+                {% endif %}
+
+                <div class="ms-3">
+                    <h3 class="h5 fw-bold">{{item.name}}</h3>
+                    <small class="text-muted d-block">
+                        {{item.design_type}} | {{item.selected_years[0]}} - {{item.selected_years[-1]}}
+                    </small>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE (Desktop) / BOTTOM (Mobile) -->
+            <div class="cart-item-bottom d-flex align-items-center gap-3">
+                <!-- Edit/Delete Buttons -->
+                <div class="d-flex gap-2 me-2">
+                    <a href="/Cart/Edit/{{ item.id }}" class="btn btn-sm btn-outline-info p-1 px-2" style="font-size: 0.75rem; border-radius: 4px;">EDIT</a>
+                    <a href="/Cart/Delete/{{ item.id }}" class="btn btn-sm btn-outline-danger p-1 px-2" style="font-size: 0.75rem; border-radius: 4px;">DEL</a>
+                </div>
+
+                <!-- Price -->
+                <span class="h4 text-success mb-0" style="white-space: nowrap;">
+                    RS. {{ "%.2f"|format(item.price) }}
+                </span>
+                
+                <!-- Selection Checkbox -->
+                <input type="checkbox" class="item-checkbox" name="selected_cart_ids" value="{{ item.id }}" style="width:24px; height:24px; accent-color: var(--accent); cursor: pointer;">
+            </div>
+
+        </div>
+        {% else %}
+        <div class="alert alert-secondary">Your cart is empty. <a href="/Shop">Go to Shop</a></div>
+        {% endfor %}
+
+        <!-- COMMENTS SECTION -->
+        {% if cart|length > 0 %}
+        <div class="mt-4 p-4" style="background: var(--glass); border: 1px solid var(--border-color); border-radius: 5px;">
+            <label class="mech-label">ADDITIONAL COMMENTS / REQUESTS</label>
+            <textarea name="user_comments" class="mech-input" rows="3" placeholder="Any special instructions?"></textarea>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+<!-- CHECKOUT BAR -->
+<div class="cart-bar">
+    <div class="h4">ITEMS: <span id="cart-selected-count" class="text-success fw-bold">0</span></div>
+    <div class="h4">TOTAL: <span id="cart-total-price" class="text-success fw-bold">RS. 0.00</span></div> 
+    <button id="checkout-button" class="mech-action-btn" style="width: auto; padding: 10px 40px; margin:0;">INITIATE CHECKOUT</button>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const checkboxes = document.querySelectorAll(".item-checkbox");
+    const countDisplay = document.querySelector("#cart-selected-count");
+    const totalDisplay = document.querySelector("#cart-total-price");
+    const checkoutBtn = document.getElementById("checkout-button");
+    const checkoutForm = document.getElementById("checkout-form");
+
+    function updateCartSummary() {
+        let selectedCount = 0;
+        let totalPrice = 0;
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const itemContainer = checkbox.closest(".cart-item");
+                const price = parseFloat(itemContainer.getAttribute("data-price"));
+
+                if (!isNaN(price)) {
+                    selectedCount++;
+                    totalPrice += price;
+                }
+            }
+        });
+
+        if (countDisplay) countDisplay.textContent = selectedCount;
+        if (totalDisplay) totalDisplay.textContent = "RS. " + totalPrice.toFixed(2);
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener("change", updateCartSummary));
+    updateCartSummary();
+
+    checkoutBtn.addEventListener("click", function() {
+        const checked = document.querySelectorAll('.item-checkbox:checked');
+        if(checked.length === 0) {
+            alert("Please select at least one item to checkout.");
+            return;
+        }
+        checkoutForm.submit();
+    });
+});
+</script>
+{% endblock %}

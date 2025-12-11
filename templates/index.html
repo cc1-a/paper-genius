@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block body %}
+
+    <!-- ORDER SUCCESS & PAYMENT MODAL -->
+    {% if order_success %}
+    <div class="fixed-top w-100 h-100 d-flex justify-content-center align-items-center" style="background: rgba(0,0,0,0.85); z-index: 9999; padding: 20px;">
+        <div class="bg-white rounded-3 shadow-lg position-relative overflow-hidden" 
+             style="max-width: 450px; width: 100%; color: #333; border-top: 5px solid #25D366;">
+            <div class="p-4 text-center">
+                <div class="mb-3">
+                    <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                </div>
+                <h2 class="h3 fw-bold text-dark mb-1">ORDER RECEIVED</h2>
+                <p class="text-muted mb-0">Order ID: <strong>#{{ order_id }}</strong></p>
+            </div>
+            <div class="mx-4 p-4 rounded-3" style="background-color: #f0f9ff; border: 1px dashed #0d6efd;">
+                <h6 class="fw-bold text-primary mb-3 text-center text-uppercase" style="letter-spacing: 1px;">Bank Transfer Details</h6>
+                <div class="mb-2">
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Bank</small>
+                    <div class="fw-bold text-dark">Commercial Bank</div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Account No</small>
+                    <div class="h4 fw-bold text-dark mb-0 user-select-all" style="letter-spacing: 1px;">8019889777</div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Account Name</small>
+                    <div class="fw-bold text-dark text-uppercase">MASTER K AMODH PANDITHA GUNAWARDANA</div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Branch</small>
+                    <div class="fw-bold text-dark text-uppercase">121 - KOTTAWA BRANCH</div>
+                </div>
+                <hr style="border-color: #0d6efd; opacity: 0.2;">
+                <div class="d-flex justify-content-between align-items-end">
+                    <span class="small text-muted fw-bold text-uppercase">Total Amount</span>
+                    <span class="h3 mb-0 fw-bold" style="color: #000 !important;">LKR {{ "%.2f"|format(total_price) }}</span>
+                </div>
+            </div>
+            <div class="p-4 text-center">
+                <p class="small text-muted mb-3">Please upload a screenshot of your payment to WhatsApp to confirm your order.</p>
+                <a href="https://wa.me/94724786229" target="_blank" class="btn btn-lg w-100 fw-bold d-flex justify-content-center align-items-center gap-2 shadow-sm" 
+                   style="background: #25D366; border: none; color: white; border-radius: 8px; font-size: 1rem;">
+                    <i class="fab fa-whatsapp fa-lg"></i> UPLOAD PROOF
+                </a>
+                <div class="mt-3">
+                    <a href="/" class="text-decoration-none text-muted small">Close Window</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- NORMAL HOMEPAGE CONTENT -->
+    <section class="mech-hero">
+        <h1 class="display-1 fw-bold">PAPER GENIUS</h1>
+        <h3 class="text-success mb-4">NEXT GENERATION EDUCATION</h3>
+        <a href="/Shop" class="mech-action-btn" style="display:inline-block; width:auto; padding:15px 40px;">ENTER SHOP</a>
+    </section>
+
+    <!-- Categories -->
+    <div class="container mb-5">
+        <h2 class="text-center mb-4">EXAM BOARDS</h2>
+        <div class="mech-grid">
+            <div class="mech-card">
+                <div class="mech-img-wrap" style="height:200px;">
+                    <img src="{{ url_for('static', filename='img/edexcel.jpg')}}" alt="Edexcel" style="object-fit: cover;">
+                </div>
+                <div class="mech-body">
+                    <h3>EDEXCEL</h3>
+                    <a href="/Shop" class="mech-action-btn d-block mt-3 text-center">ACCESS</a>
+                </div>
+            </div>
+            <div class="mech-card">
+                <div class="mech-img-wrap" style="height:200px;">
+                    <img src="{{ url_for('static', filename='img/cambridge.png')}}" alt="Cambridge" style="object-fit: cover;">
+                </div>
+                <div class="mech-body">
+                    <h3>CAMBRIDGE</h3>
+                    <button class="mech-action-btn" disabled style="opacity:0.5; border-color:grey; color:grey; cursor: not-allowed;">LOCKED</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

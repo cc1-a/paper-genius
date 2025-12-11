@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container py-5">
+    <div class="mech-panel">
+        <h2 class="text-center mb-4">REGISTER UNIT</h2>
+        {{error}}
+        <form method="post" action="/Register" id="registrationForm">
+            <label class="mech-label">Full Name</label>
+            <input type="text" name="Name" class="mech-input" required>
+            <div class="row">
+                <div class="col-6">
+                    <label class="mech-label">Email</label>
+                    <input type="email" name="Email" class="mech-input" required>
+                </div>
+                <div class="col-6">
+                    <label class="mech-label">Phone</label>
+                    <div class="input-group">
+                        <select name="country_code" id="countryCodeSelect" class="form-select" style="max-width: 110px; border-top-right-radius: 0; border-bottom-right-radius: 0; height: 38px;">
+                            <option value="">Select Country</option>
+                            <option value="+94" data-placeholder="7xxxxxxxx" selected>🇱🇰 Sri Lanka (+94)</option>
+                            <option value="+91" data-placeholder="9xxxxxxxxx">🇮🇳 India (+91)</option>
+                            <option value="+1" data-placeholder="201xxxxxxx">🇺🇸 Canada/US (+1)</option>
+                            <option value="+44" data-placeholder="7xxxxxxxxx">🇬🇧 UK (+44)</option>
+                            <option value="+60" data-placeholder="1xxxxxxxxx">🇲🇾 Malaysia (+60)</option>
+                            <option value="+61" data-placeholder="4xxxxxxxxx">🇦🇺 Australia (+61)</option>
+                        </select>
+                        
+                        <input type="tel" name="phone_number_local" id="phoneNumberLocalInput" class="mech-input" placeholder="7xxxxxxxx" required 
+                            style="border-top-left-radius: 0; border-bottom-left-radius: 0; flex-grow: 1;">
+                        
+                        <input type="hidden" name="phone_number" id="phoneNumberCombinedInput" required>
+                    </div>
+                    <p id="phoneError" style="color: red; font-size: 0.85em; margin-top: 5px;"></p>
+                </div>
+            </div>
+            <label class="mech-label">Password</label>
+            <input type="password" name="Password" class="mech-input" required>
+            <input type="password" name="ConfirmPassword" class="mech-input" placeholder="Confirm Password" required>
+            
+            <label class="mech-label">Details</label>
+            <input type="text" name="School" class="mech-input" placeholder="School Name" required>
+            <select name="level" class="mech-input">
+                <option value="A2">A2</option>
+                <option value="AS">AS</option>
+                <option value="IGCSE">IGCSE</option>
+            </select>
+            
+            <label class="mech-label">Location</label>
+            <input type="text" name="address" class="mech-input" placeholder="Address" required>
+            <input type="text" name="town" class="mech-input" placeholder="Town" required>
+            
+            <button type="submit" class="mech-action-btn" id="submitButton">CREATE ACCOUNT</button>
+        </form>
+        <p class="text-center " style="color: red;">{{error}}</p>
+    </div>
+</div>
+
+<script>
+    const codeSelect = document.getElementById('countryCodeSelect');
+    const localInput = document.getElementById('phoneNumberLocalInput');
+    const combinedInput = document.getElementById('phoneNumberCombinedInput');
+    const phoneError = document.getElementById('phoneError');
+    const form = document.getElementById('registrationForm');
+
+    // Simple regex for local numbers (just digits)
+    const localNumberRegex = /^[0-9]+$/;
+
+    function updatePlaceholderAndCombine() {
+        // Update placeholder based on selected country
+        const selectedOption = codeSelect.options[codeSelect.selectedIndex];
+        const placeholder = selectedOption.getAttribute('data-placeholder') || 'Local Phone Number';
+        localInput.placeholder = placeholder;
+        
+        // Combine the code and local number into the hidden field
+        const countryCode = codeSelect.value;
+        const localNumber = localInput.value.trim();
+        
+        // This is the number that Flask will receive: e.g., +947xxxxxxxx
+        combinedInput.value = countryCode + localNumber;
+        
+        // Trigger validation after combination
+        validatePhoneNumber();
+    }
+
+    function validatePhoneNumber() {
+        const countryCode = codeSelect.value;
+        const localNumber = localInput.value.trim();
+        
+        phoneError.textContent = '';
+        localInput.setCustomValidity("");
+        combinedInput.setCustomValidity("");
+
+        if (!countryCode) {
+            phoneError.textContent = 'Please select your country code.';
+            combinedInput.setCustomValidity("Country code required.");
+            return false;
+        }
+
+        if (!localNumber || !localNumberRegex.test(localNumber)) {
+            phoneError.textContent = 'Please enter a valid local phone number (digits only).';
+            combinedInput.setCustomValidity("Local number required.");
+            return false;
+        }
+
+        // Specific length check for Sri Lanka (example)
+        if (countryCode === '+94') {
+            // Sri Lankan mobile numbers are typically 9 digits after the '0' or '+94' (e.g., 7xxxxxxxx)
+            if (localNumber.length !== 9) {
+                phoneError.textContent = 'Sri Lankan numbers must be 9 digits (e.g., 7xxxxxxxx).';
+                combinedInput.setCustomValidity("Invalid SL number length.");
+                return false;
+            }
+        }
+        
+        // Default success message/reminder
+        phoneError.textContent = 'Ensure this is your active WhatsApp number.';
+        phoneError.style.color = 'green';
+        return true;
+    }
+
+    // Attach listeners
+    codeSelect.addEventListener('change', updatePlaceholderAndCombine);
+    localInput.addEventListener('input', updatePlaceholderAndCombine);
+    localInput.addEventListener('input', validatePhoneNumber);
+    
+    // Final check on form submission
+    form.addEventListener('submit', function(event) {
+        // Run combination one last time before submission
+        updatePlaceholderAndCombine(); 
+        
+        if (!validatePhoneNumber()) {
+            event.preventDefault(); // Stop form submission
+            localInput.focus();
+        }
+    });
+
+    // Initial setup on page load
+    updatePlaceholderAndCombine();
+
+</script>
+{% endblock %}
