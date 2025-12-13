@@ -1,19 +1,21 @@
 from flask import Blueprint, render_template, request, jsonify, g
-import google.generativeai as genai
 import os
+from dotenv import load_dotenv
+from groq import Groq
 from models import db, items, cart 
 from functions import calculate_total_price 
 
+load_dotenv()
+
 ai_bp = Blueprint('ai', __name__)
 
-GENAI_API_KEY = 'AIzaSyAb17f7aL_IC4ILNJSK-0Ad8_WAAHOw5KI'
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
-if GENAI_API_KEY:
-    genai.configure(api_key=GENAI_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+if GROQ_API_KEY:
+    client = Groq(api_key=GROQ_API_KEY)
 else:
-    print("WARNING: GENAI_API_KEY not set.")
-    model = None
+    print("WARNING: GROQ_API_KEY not set in environment variables.")
+    client = None
 
 def resolve_year_key(input_val, valid_keys):
     if not input_val:
@@ -55,7 +57,7 @@ def ai_interface():
 @ai_bp.route("/api/chat", methods=["POST"])
 def chat_api():
     try:
-        if not model:
+        if not client:
             return jsonify({'error': 'AI API Key missing on server.'}), 500
 
         data = request.json
@@ -112,10 +114,16 @@ def chat_api():
             "   Example: ||ADD_CART:Pure Maths 1|2019 Jan|2020 Oct|Normal||\n"
         )
         
-        full_prompt = f"{system_instruction}\n\nUser Question: {user_message}"
-        
-        response = model.generate_content(full_prompt)
-        ai_text = response.text
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": system_instruction},
+                {"role": "user", "content": user_message}
+            ],
+            temperature=0.5,
+        )
+
+        ai_text = completion.choices[0].message.content
 
         if "||ADD_CART:" in ai_text and is_logged_in:
             try:
