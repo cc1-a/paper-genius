@@ -6,7 +6,7 @@ from functions import calculate_total_price
 
 ai_bp = Blueprint('ai', __name__)
 
-GENAI_API_KEY = 'AIzaSyDZ0BGY6OMHsU9T1bXxz4h2cl_m9-54zJc'
+GENAI_API_KEY = 'AIzaSyAb17f7aL_IC4ILNJSK-0Ad8_WAAHOw5KI'
 
 if GENAI_API_KEY:
     genai.configure(api_key=GENAI_API_KEY)
