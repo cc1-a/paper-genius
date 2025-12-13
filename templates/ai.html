@@ -136,7 +136,7 @@
             <div class="chat-messages" id="chat-box">
                 <!-- Welcome Message -->
                 <div class="message ai">
-                    <strong>GENIUS AI:</strong> Systems Online. I can assist you with Edexcel Past Paper information and pricing. I can access your cart or process orders(NO CHECKOUT). How may I help?
+                    <strong>GENIUS AI:</strong> Systems Online. I can assist you with Edexcel Past Paper information and pricing. I can access your cart or process orders (NO CHECKOUT). How may I help?
                 </div>
             </div>
 
@@ -160,6 +160,7 @@
         function appendMessage(text, sender) {
             const div = document.createElement('div');
             div.classList.add('message', sender);
+            // Replace newlines with breaks for display
             div.innerHTML = text.replace(/\n/g, '<br>');
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -169,6 +170,7 @@
             const message = userInput.value.trim();
             if (!message) return;
 
+            // User message is plain text
             appendMessage(message, 'user');
             userInput.value = '';
             
@@ -190,9 +192,14 @@
                 if (data.error) {
                     appendMessage("Error: " + data.error, 'ai');
                 } else {
+                    // Improved Markdown Parsing for Groq/Llama 3
                     let formattedText = data.response
+                        // Bold
                         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\*(.*?)\*/g, '<em>$1</em>');
+                        // Italics
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        // Clean up bullet points so they don't look messy
+                        .replace(/- /g, '• '); 
                     
                     appendMessage(formattedText, 'ai');
                 }
