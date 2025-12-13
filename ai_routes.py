@@ -10,7 +10,7 @@ GENAI_API_KEY = 'AIzaSyDZ0BGY6OMHsU9T1bXxz4h2cl_m9-54zJc'
 
 if GENAI_API_KEY:
     genai.configure(api_key=GENAI_API_KEY)
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    model = genai.GenerativeModel('gemini-1.5-flash')
 else:
     print("WARNING: GENAI_API_KEY not set.")
     model = None
