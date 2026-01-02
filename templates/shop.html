@@ -1,76 +1,207 @@
 {% extends "base.html" %}
-{% block title %}Shop Edexcel Past Paper Books | Paper Genius Sri Lanka{% endblock %}
-{% block description %}Browse our collection of printed Edexcel and IGCSE past papers. Choose your years (2019-2024) and customize your cover design.{% endblock %}
+{% block title %}Search Units | Paper Genius Sri Lanka{% endblock %}
+
+{% block head %}
+<style>
+    .shop-item { transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+    .shop-item:hover { transform: translateY(-8px); }
+    
+    .mech-card-link { text-decoration: none !important; color: inherit; display: block; }
+
+    .unit-card {
+        padding: 0;
+        overflow: hidden;
+        position: relative;
+        aspect-ratio: 2 / 3.5; 
+        border: 1px solid var(--border-color);
+        background: var(--bg-secondary);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .unit-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease, filter 0.4s ease;
+        transform: scale(1.01);
+    }
+
+    /* BLUR BACKGROUND ON HOVER */
+    .mech-card-link:hover .unit-image { 
+        transform: scale(1.15); 
+        filter: blur(8px) brightness(0.5) grayscale(0.3);
+    }
+
+    /* SCANNING HUD ELEMENTS */
+    .scan-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .scan-overlay::before, .scan-overlay::after {
+        content: '';
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border: 2px solid var(--accent);
+        transition: all 0.4s ease;
+    }
+    .scan-overlay::before { top: 20px; left: 20px; border-right: 0; border-bottom: 0; }
+    .scan-overlay::after { bottom: 70px; right: 20px; border-left: 0; border-top: 0; }
+
+    .mech-card-link:hover .scan-overlay { opacity: 1; }
+
+    /* ACTION BUTTON */
+    .view-specs-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        z-index: 10;
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        pointer-events: none;
+        width: 80%;
+        text-align: center;
+    }
+
+    .view-specs-box {
+        display: inline-block;
+        padding: 12px 25px;
+        border: 1px solid var(--accent);
+        background: rgba(0, 0, 0, 0.7);
+        box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    }
+
+    .view-specs-text {
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 800;
+        color: var(--accent);
+        font-size: 0.9rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin: 0;
+    }
+
+    .mech-card-link:hover .view-specs-container {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* TITLE BAR (FIXED FOR LIGHT MODE) */
+    .unit-title-box {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 55px;
+        background: var(--bg-secondary); /* Adapts to Theme */
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 15;
+    }
+
+    .unit-title-text {
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 1px;
+        color: var(--text-primary); /* Adapts to Theme */
+        text-transform: uppercase;
+        margin: 0;
+        padding: 0 10px;
+        text-align: center;
+    }
+
+    .scan-line {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 1px;
+        background: var(--accent);
+        box-shadow: 0 0 8px var(--accent);
+        opacity: 0; z-index: 6;
+    }
+
+    .mech-card-link:hover .scan-line {
+        animation: scanMove 2.5s linear infinite;
+        opacity: 0.6;
+    }
+
+    @keyframes scanMove { 0% { top: 0%; } 100% { top: 85%; } }
+</style>
+{% endblock %}
 
 {% block body %}
-    <div class="container py-5">
-        <h1 class="text-center mb-5" style="font-family: 'Rajdhani', sans-serif;">RESOURCE INVENTORY</h1>
-        <div class="mech-grid">
-            {% for item in items %}
-            <div class="mech-card">
-                <div class="mech-img-wrap">
-                    {% if item.img.startswith('http') %}
-                        <img src="{{ item.img }}" alt="{{item.name}} Edexcel Past Paper Book Sri Lanka" title="{{item.name}} Printed Resource">
-                    {% else %}
-                        <img src="{{ url_for('static', filename=item.img)}}" alt="{{item.name}} printed exam book" title="{{item.name}}">
-                    {% endif %}
-                </div>
-                <div class="mech-body">
-                    <h4 class="fw-bold">{{item.name}}</h4>
-                    <form action="/Shop" method="POST" class="form_shop"> 
-                        <input name="item_id" type="text" value="{{item.id}}" hidden>
-                        <label class="mech-label text-start">Cover Design</label>
-                        <select name="cover_type" class="mech-input" required>
-                            <option value="" disabled selected>Select Style...</option>
-                            <option value="Custom">Custom Cover</option>
-                            <option value="Normal">Standard Cover</option>
-                            <option value="Minimalistic">Minimalistic Cover</option>
-                        </select>
-                        <div class="d-flex gap-2">
-                            <div class="w-50">
-                                <label class="mech-label text-start">Start Year</label>
-                                <select name="selected_year_from" class="mech-input year-from-select" required>
-                                    <option value="" disabled selected>From</option>
-                                    {% for year in item.years_available.keys() %}
-                                        <option value="{{ year }}" >{{ year }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="w-50">
-                                <label class="mech-label text-start">End Year</label>
-                                <select name="selected_year_to" class="mech-input year-to-select" required>
-                                    <option value="" disabled selected>To</option>
-                                    {% for year in item.years_available.keys() %}
-                                        <option value="{{ year }}" >{{ year }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <input type="hidden" name="item_id" value="{{ item.id }}">
-                        <button class="mech-action-btn" type="submit">ADD TO LOADOUT</button>
-                    </form>
-                </div>
+<div class="container py-5">
+    <h1 class="text-center mb-4" style="font-family: 'Rajdhani', sans-serif; letter-spacing: 5px; font-weight: 800;">SEARCH THE UNIT</h1>
+    
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-6">
+            <div class="position-relative">
+                <i class="fas fa-search position-absolute" style="left: 15px; top: 18px; color: var(--accent);"></i>
+                <input type="text" id="unit-search" class="mech-input ps-5" placeholder="ENTER UNIT ID (E.G. PHYSICS U1)...">
             </div>
-            {% endfor %}
         </div>
     </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const forms = document.querySelectorAll(".form_shop");
-    forms.forEach(form => {
-        const fromSelect = form.querySelector(".year-from-select");
-        const toSelect = form.querySelector(".year-to-select");
+    <div class="mech-grid" id="inventory-grid">
+        {% for item in items %}
+        <div class="shop-item" data-name="{{ item.name.lower() }}">
+            <a href="/Product/{{ item.id }}" class="mech-card-link">
+                <div class="mech-card unit-card">
+                    <div class="scan-overlay"></div>
+                    <div class="scan-line"></div>
+                    <div class="view-specs-container">
+                        <div class="view-specs-box">
+                            <p class="view-specs-text">VIEW SPECS</p>
+                        </div>
+                    </div>
+                    <div style="flex: 1; width: 100%; overflow: hidden; background: #000;">
+                        {% if item.img.startswith('http') %}
+                            <img src="{{ item.img }}" class="unit-image" alt="{{item.name}} Edexcel Book">
+                        {% else %}
+                            <img src="{{ url_for('static', filename=item.img)}}" class="unit-image" alt="{{item.name}} Edexcel Book">
+                        {% endif %}
+                    </div>
+                    <div class="unit-title-box">
+                        <h4 class="unit-title-text">{{item.name}}</h4>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
 
-        fromSelect.addEventListener("change", () => {
-            const fromValue = fromSelect.value;
-            toSelect.value = "";
-            Array.from(toSelect.options).forEach(option => {
-                if (!option.value) return; 
-                option.disabled = option.value <= fromValue; 
-            });
-        });
+    <div id="no-results" class="text-center py-5 d-none">
+        <i class="fas fa-exclamation-triangle fa-3x mb-3" style="color: var(--accent);"></i>
+        <h3 style="font-family: 'Rajdhani'; color: var(--text-secondary);">UNIT NOT FOUND</h3>
+    </div>
+</div>
+
+<script>
+document.getElementById('unit-search').addEventListener('input', function(e) {
+    const term = e.target.value.toLowerCase();
+    const items = document.querySelectorAll('.shop-item');
+    const noResults = document.getElementById('no-results');
+    let found = false;
+
+    items.forEach(item => {
+        const name = item.getAttribute('data-name');
+        if (name.includes(term)) {
+            item.style.display = 'block';
+            found = true;
+        } else {
+            item.style.display = 'none';
+        }
     });
+
+    noResults.classList.toggle('d-none', found);
 });
 </script>
 {% endblock %}
