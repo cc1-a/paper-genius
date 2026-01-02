@@ -1,42 +1,45 @@
 {% extends "base.html" %}
+{% block title %}Shop Edexcel Past Paper Books | Paper Genius Sri Lanka{% endblock %}
+{% block description %}Browse our collection of printed Edexcel and IGCSE past papers. Choose your years (2019-2024) and customize your cover design.{% endblock %}
+
 {% block body %}
-    <div class="container">
+    <div class="container py-5">
+        <h1 class="text-center mb-5" style="font-family: 'Rajdhani', sans-serif;">RESOURCE INVENTORY</h1>
         <div class="mech-grid">
             {% for item in items %}
             <div class="mech-card">
                 <div class="mech-img-wrap">
-                    <!-- FIX: Check if image is a URL (Cloudinary) or local file -->
                     {% if item.img.startswith('http') %}
-                        <img src="{{ item.img }}" alt="{{item.name}}">
+                        <img src="{{ item.img }}" alt="{{item.name}} Edexcel Past Paper Book Sri Lanka" title="{{item.name}} Printed Resource">
                     {% else %}
-                        <img src="{{ url_for('static', filename=item.img)}}" alt="{{item.name}}">
+                        <img src="{{ url_for('static', filename=item.img)}}" alt="{{item.name}} printed exam book" title="{{item.name}}">
                     {% endif %}
                 </div>
                 <div class="mech-body">
-                    <h4>{{item.name}}</h4>
+                    <h4 class="fw-bold">{{item.name}}</h4>
                     <form action="/Shop" method="POST" class="form_shop"> 
                         <input name="item_id" type="text" value="{{item.id}}" hidden>
-                        <label class="mech-label text-start">Cover</label>
+                        <label class="mech-label text-start">Cover Design</label>
                         <select name="cover_type" class="mech-input" required>
-                            <option value="" disabled selected>Select...</option>
-                            <option value="Custom">Custom</option>
-                            <option value="Normal">Normal</option>
-                            <option value="Minimalistic">Minimalistic</option>
+                            <option value="" disabled selected>Select Style...</option>
+                            <option value="Custom">Custom Cover</option>
+                            <option value="Normal">Standard Cover</option>
+                            <option value="Minimalistic">Minimalistic Cover</option>
                         </select>
                         <div class="d-flex gap-2">
                             <div class="w-50">
-                                <label class="mech-label text-start">From</label>
+                                <label class="mech-label text-start">Start Year</label>
                                 <select name="selected_year_from" class="mech-input year-from-select" required>
-                                    <option value="" disabled selected>Select From</option>
+                                    <option value="" disabled selected>From</option>
                                     {% for year in item.years_available.keys() %}
                                         <option value="{{ year }}" >{{ year }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                             <div class="w-50">
-                                <label class="mech-label text-start">To</label>
+                                <label class="mech-label text-start">End Year</label>
                                 <select name="selected_year_to" class="mech-input year-to-select" required>
-                                    <option value="" disabled selected>Select To</option>
+                                    <option value="" disabled selected>To</option>
                                     {% for year in item.years_available.keys() %}
                                         <option value="{{ year }}" >{{ year }}</option>
                                     {% endfor %}
@@ -44,7 +47,7 @@
                             </div>
                         </div>
                         <input type="hidden" name="item_id" value="{{ item.id }}">
-                        <button class="mech-action-btn" type="submit">ADD TO CART</button>
+                        <button class="mech-action-btn" type="submit">ADD TO LOADOUT</button>
                     </form>
                 </div>
             </div>
