@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, session, g
+from flask import Flask, render_template, request, redirect, url_for, session, g, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
@@ -45,6 +45,51 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = db.session.get(users, user_id)
+
+@app.route('/robots.txt')
+def robots():
+    response = make_response("""User-agent: *
+Allow: /
+Allow: /Shop
+Allow: /About
+Allow: /Contact
+Disallow: /admin/
+Disallow: /Cart/
+Disallow: /Profile/
+Disallow: /MyOrders/
+Sitemap: """ + request.url_root.rstrip('/') + """/sitemap.xml""")
+    response.headers["Content-Type"] = "text/plain"
+    return response
+
+@app.route('/sitemap.xml')
+def sitemap():
+    try:
+        all_shop_items = db.session.execute(db.select(items)).scalars().all()
+        base_url = request.url_root.rstrip('/')
+        
+        xml = '<?xml version="1.0" encoding="UTF-8"?>'
+        xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        
+        static_pages = [
+            {"loc": f"{base_url}/", "pri": "1.0"},
+            {"loc": f"{base_url}/Shop", "pri": "0.9"},
+            {"loc": f"{base_url}/About", "pri": "0.7"},
+            {"loc": f"{base_url}/Contact", "pri": "0.7"}
+        ]
+        
+        for page in static_pages:
+            xml += f"<url><loc>{page['loc']}</loc><priority>{page['pri']}</priority></url>"
+        
+        for item in all_shop_items:
+            xml += f"<url><loc>{base_url}/Shop</loc><priority>0.8</priority></url>"
+            
+        xml += '</urlset>'
+        
+        response = make_response(xml)
+        response.headers["Content-Type"] = "application/xml"
+        return response
+    except Exception as e:
+        return str(e), 500
 
 @app.route("/")
 def home():
@@ -243,7 +288,7 @@ def admin():
                     session['user_id'] = user.id
                     return redirect(url_for('admin_dashboard'))
                 else:
-                    return render_template('/admin/admin.html', error="Access Denied: Not an Admin.")
+                    return render_template('/admin/admin.html', error="Access Denied.")
         
         authenticated, is_admin = authenticate(username_input, password_input)
         if authenticated and is_admin:
@@ -319,7 +364,6 @@ def add_item():
                 upload_result = cloudinary.uploader.upload(file)
                 img_url = upload_result['secure_url']
             except Exception as e:
-                print(f"Cloudinary Upload Error: {e}")
                 img_url = request.form.get('img_url') 
         else:
             img_url = request.form.get('img_url')
@@ -367,11 +411,6 @@ def edit_item(item_id):
         return redirect(url_for('admin_dashboard'))
     years_list = list(item.years_available.items())
     return render_template('/admin/edit_item.html', item=item, years_list=years_list)
-
-@app.route("/admin/dashboard_N")
-def admin_dashboardN():
-    if not session.get('user_id'): return redirect(url_for('login'))
-    return render_template('/admin/admin_dashboardN.html')
 
 @app.route("/About")
 def about(): return render_template("about.html")
