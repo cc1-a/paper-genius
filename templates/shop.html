@@ -12,28 +12,38 @@
         padding: 0;
         overflow: hidden;
         position: relative;
-        aspect-ratio: 2 / 3.5; 
+        /* Remove fixed aspect ratio from card, we apply it to the image wrapper instead */
         border: 1px solid var(--border-color);
         background: var(--bg-secondary);
         display: flex;
         flex-direction: column;
+        height: 100%;
+    }
+
+    /* 1. STRICT A4 RATIO WRAPPER */
+    .unit-image-wrapper {
+        width: 100%;
+        aspect-ratio: 1 / 1.414; /* A4 Ratio */
+        overflow: hidden;
+        background: #fff; /* Most covers are white, this blends the edges */
+        position: relative;
     }
 
     .unit-image {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        /* 2. CONTAIN ensures the whole page is visible without cropping */
+        object-fit: contain; 
         transition: transform 0.6s ease, filter 0.4s ease;
-        transform: scale(1.01);
     }
 
-    /* BLUR BACKGROUND ON HOVER */
+    /* HOVER EFFECTS */
     .mech-card-link:hover .unit-image { 
-        transform: scale(1.15); 
-        filter: blur(8px) brightness(0.5) grayscale(0.3);
+        transform: scale(1.05);
+        filter: brightness(0.8);
     }
 
-    /* SCANNING HUD ELEMENTS */
+    /* 3. THE HUD OVERLAY (Only visible on hover) */
     .scan-overlay {
         position: absolute;
         inset: 0;
@@ -41,22 +51,9 @@
         pointer-events: none;
         opacity: 0;
         transition: opacity 0.3s ease;
+        background: rgba(0, 210, 255, 0.1); /* Subtle tint */
     }
 
-    .scan-overlay::before, .scan-overlay::after {
-        content: '';
-        position: absolute;
-        width: 30px;
-        height: 30px;
-        border: 2px solid var(--accent);
-        transition: all 0.4s ease;
-    }
-    .scan-overlay::before { top: 20px; left: 20px; border-right: 0; border-bottom: 0; }
-    .scan-overlay::after { bottom: 70px; right: 20px; border-left: 0; border-top: 0; }
-
-    .mech-card-link:hover .scan-overlay { opacity: 1; }
-
-    /* ACTION BUTTON */
     .view-specs-container {
         position: absolute;
         top: 50%;
@@ -65,75 +62,72 @@
         z-index: 10;
         opacity: 0;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        pointer-events: none;
-        width: 80%;
-        text-align: center;
     }
 
     .view-specs-box {
-        display: inline-block;
-        padding: 12px 25px;
+        padding: 10px 20px;
         border: 1px solid var(--accent);
-        background: rgba(0, 0, 0, 0.7);
-        box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        background: rgba(0, 0, 0, 0.8);
+        box-shadow: 0 0 15px var(--accent);
+        white-space: nowrap;
     }
 
     .view-specs-text {
         font-family: 'Rajdhani', sans-serif;
         font-weight: 800;
         color: var(--accent);
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         letter-spacing: 3px;
-        text-transform: uppercase;
         margin: 0;
     }
 
+    .mech-card-link:hover .scan-overlay,
     .mech-card-link:hover .view-specs-container {
         opacity: 1;
+    }
+    
+    .mech-card-link:hover .view-specs-container {
         transform: translate(-50%, -50%) scale(1);
     }
 
-    /* TITLE BAR (FIXED FOR LIGHT MODE) */
+    /* 4. TITLE BAR (Moved below the image) */
     .unit-title-box {
-        position: absolute;
-        bottom: 0;
         width: 100%;
-        height: 55px;
-        background: var(--bg-secondary); /* Adapts to Theme */
-        backdrop-filter: blur(10px);
-        border-top: 1px solid var(--accent);
+        padding: 15px 10px;
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border-color);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 15;
+        min-height: 60px;
     }
 
     .unit-title-text {
         font-family: 'Rajdhani', sans-serif;
         font-weight: 700;
-        font-size: 1rem;
+        font-size: 0.95rem;
         letter-spacing: 1px;
-        color: var(--text-primary); /* Adapts to Theme */
+        color: var(--text-primary);
         text-transform: uppercase;
         margin: 0;
-        padding: 0 10px;
         text-align: center;
+        line-height: 1.2;
     }
 
     .scan-line {
         position: absolute;
-        top: 0; left: 0; width: 100%; height: 1px;
+        top: 0; left: 0; width: 100%; height: 2px;
         background: var(--accent);
         box-shadow: 0 0 8px var(--accent);
         opacity: 0; z-index: 6;
     }
 
     .mech-card-link:hover .scan-line {
-        animation: scanMove 2.5s linear infinite;
-        opacity: 0.6;
+        animation: scanMove 2s linear infinite;
+        opacity: 0.8;
     }
 
-    @keyframes scanMove { 0% { top: 0%; } 100% { top: 85%; } }
+    @keyframes scanMove { 0% { top: 0%; } 100% { top: 100%; } }
 </style>
 {% endblock %}
 
@@ -155,20 +149,25 @@
         <div class="shop-item" data-name="{{ item.name.lower() }}">
             <a href="/Product/{{ item.id }}" class="mech-card-link">
                 <div class="mech-card unit-card">
-                    <div class="scan-overlay"></div>
-                    <div class="scan-line"></div>
-                    <div class="view-specs-container">
-                        <div class="view-specs-box">
-                            <p class="view-specs-text">VIEW SPECS</p>
+                    
+                    <!-- Top Section: Image -->
+                    <div class="unit-image-wrapper">
+                        <div class="scan-overlay"></div>
+                        <div class="scan-line"></div>
+                        <div class="view-specs-container">
+                            <div class="view-specs-box">
+                                <p class="view-specs-text">VIEW SPECS</p>
+                            </div>
                         </div>
-                    </div>
-                    <div style="flex: 1; width: 100%; overflow: hidden; background: #000;">
+
                         {% if item.img.startswith('http') %}
-                            <img src="{{ item.img }}" class="unit-image" alt="{{item.name}} Edexcel Book">
+                            <img src="{{ item.img }}" class="unit-image" alt="{{item.name}} Cover">
                         {% else %}
-                            <img src="{{ url_for('static', filename=item.img)}}" class="unit-image" alt="{{item.name}} Edexcel Book">
+                            <img src="{{ url_for('static', filename=item.img)}}" class="unit-image" alt="{{item.name}} Cover">
                         {% endif %}
                     </div>
+
+                    <!-- Bottom Section: Title (Always visible, never overlaps) -->
                     <div class="unit-title-box">
                         <h4 class="unit-title-text">{{item.name}}</h4>
                     </div>
