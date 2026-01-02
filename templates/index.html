@@ -1,7 +1,28 @@
 {% extends "base.html" %}
-{% block body %}
 
-    <!-- ORDER SUCCESS & PAYMENT MODAL -->
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "LocalBusiness",
+  "name": "Paper Genius",
+  "image": "{{ url_for('static', filename='icon.png', _external=True) }}",
+  "description": "Premium provider of printed Edexcel and IGCSE past paper books in Sri Lanka.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Kottawa",
+    "addressLocality": "Colombo",
+    "addressRegion": "Western Province",
+    "addressCountry": "LK"
+  },
+  "telephone": "+94724786229",
+  "url": "{{ request.url_root }}",
+  "priceRange": "LKR"
+}
+</script>
+{% endblock %}
+
+{% block body %}
     {% if order_success %}
     <div class="fixed-top w-100 h-100 d-flex justify-content-center align-items-center" style="background: rgba(0,0,0,0.85); z-index: 9999; padding: 20px;">
         <div class="bg-white rounded-3 shadow-lg position-relative overflow-hidden" 
@@ -51,33 +72,32 @@
     </div>
     {% endif %}
 
-    <!-- NORMAL HOMEPAGE CONTENT -->
     <section class="mech-hero">
         <h1 class="display-1 fw-bold">PAPER GENIUS</h1>
-        <h3 class="text-success mb-4">NEXT GENERATION EDUCATION</h3>
+        <h3 class="text-success mb-4">NEXT GENERATION EDUCATION RESOURCES SRI LANKA</h3>
         <a href="/Shop" class="mech-action-btn" style="display:inline-block; width:auto; padding:15px 40px;">ENTER SHOP</a>
     </section>
 
-    <!-- Categories -->
     <div class="container mb-5">
-        <h2 class="text-center mb-4">EXAM BOARDS</h2>
+        <h2 class="text-center mb-4">EDEXCEL & CAMBRIDGE EXAM BOARDS</h2>
         <div class="mech-grid">
             <div class="mech-card">
                 <div class="mech-img-wrap" style="height:200px;">
-                    <img src="{{ url_for('static', filename='img/edexcel.jpg')}}" alt="Edexcel" style="object-fit: cover;">
+                    <img src="{{ url_for('static', filename='img/edexcel.jpg')}}" alt="Edexcel Past Paper Books Sri Lanka" style="object-fit: cover;">
                 </div>
                 <div class="mech-body">
                     <h3>EDEXCEL</h3>
-                    <a href="/Shop" class="mech-action-btn d-block mt-3 text-center">ACCESS</a>
+                    <p class="text-muted">Pure Maths, Physics, Chemistry, and more for AS/A2 and IGCSE.</p>
+                    <a href="/Shop" class="mech-action-btn d-block mt-3 text-center">ACCESS INVENTORY</a>
                 </div>
             </div>
             <div class="mech-card">
                 <div class="mech-img-wrap" style="height:200px;">
-                    <img src="{{ url_for('static', filename='img/cambridge.png')}}" alt="Cambridge" style="object-fit: cover;">
+                    <img src="{{ url_for('static', filename='img/cambridge.png')}}" alt="Cambridge Exam Papers Sri Lanka" style="object-fit: cover;">
                 </div>
                 <div class="mech-body">
                     <h3>CAMBRIDGE</h3>
-                    <button class="mech-action-btn" disabled style="opacity:0.5; border-color:grey; color:grey; cursor: not-allowed;">LOCKED</button>
+                    <button class="mech-action-btn" disabled style="opacity:0.5; border-color:grey; color:grey; cursor: not-allowed;">SYSTEM LOCKED</button>
                 </div>
             </div>
         </div>
