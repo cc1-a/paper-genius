@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+<!-- 1. DYNAMIC SEO DATA FOR GOOGLE -->
+{% block title %}{{ item.name }} | Edexcel Past Paper Book Sri Lanka | Paper Genius{% endblock %}
+{% block description %}Get the printed {{ item.name }} past paper book (2019-2024). Customized covers and high-quality spiral binding. Island-wide delivery in Sri Lanka.{% endblock %}
+
+{% block head %}
+<!-- 2. OPEN GRAPH FOR WHATSAPP/SOCIAL SHARING -->
+<meta property="og:title" content="{{ item.name }} - Premium Past Paper Books">
+<meta property="og:description" content="Order your custom {{ item.name }} resource. Fast delivery in Sri Lanka.">
+<meta property="og:image" content="{{ item.img if item.img.startswith('http') else url_for('static', filename=item.img, _external=True) }}">
+
+<style>
+    .product-container { display: flex; gap: 30px; margin-top: 20px; align-items: flex-start; }
+    .product-visual { flex: 1.2; position: sticky; top: 100px; display: flex; justify-content: center; }
+    .magnify-container {
+        width: 100%; max-width: 500px; max-height: 80vh; aspect-ratio: 1 / 1.414; 
+        background: #fff; border: 2px solid var(--accent); overflow: hidden; position: relative; cursor: crosshair;
+    }
+    .magnify-container img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.1s ease-out; transform-origin: center center; }
+    .product-info { flex: 1; min-width: 320px; }
+    @media (max-width: 992px) {
+        .product-container { flex-direction: column; align-items: center; }
+        .product-visual { position: static; width: 100%; }
+        .magnify-container { max-height: 60vh; }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <a href="/Shop" class="mech-item text-decoration-none" style="font-size: 0.9rem;">
+            <i class="fas fa-chevron-left me-2"></i> RETURN TO ARMORY
+        </a>
+    </nav>
+
+    <div class="product-container">
+        <div class="product-visual">
+            <div class="magnify-container" id="zoom-box">
+                {% if item.img.startswith('http') %}
+                    <img src="{{ item.img }}" id="main-img" alt="{{ item.name }} Edexcel Past Paper Book">
+                {% else %}
+                    <img src="{{ url_for('static', filename=item.img)}}" id="main-img" alt="{{ item.name }} Edexcel Past Paper Book">
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="product-info">
+            <div class="mech-panel" style="padding: 30px;">
+                <span class="badge bg-success mb-2" style="letter-spacing: 2px;">AUTHENTIC RESOURCE</span>
+                <h1 class="display-5 fw-bold" style="font-family: 'Rajdhani';">{{ item.name }}</h1>
+                
+                <form action="/Shop" method="POST">
+                    <input name="item_id" type="text" value="{{item.id}}" hidden>
+                    
+                    <div class="mb-3">
+                        <label class="mech-label">COVER SPECIFICATION</label>
+                        <select name="cover_type" class="mech-input" required>
+                            <option value="Normal">Normal Cover (250gsm)</option>
+                            <option value="Custom">Custom Design</option>
+                            <option value="Minimalistic">Minimalistic (Clear View)</option>
+                        </select>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <label class="mech-label">START YEAR</label>
+                            <select name="selected_year_from" id="from-select" class="mech-input" required>
+                                <option value="" disabled selected>Year</option>
+                                {% for year in item.years_available.keys()|sort %}
+                                    <option value="{{ year }}">{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="mech-label">END YEAR</label>
+                            <select name="selected_year_to" id="to-select" class="mech-input" required>
+                                <option value="" disabled selected>Year</option>
+                                {% for year in item.years_available.keys()|sort %}
+                                    <option value="{{ year }}">{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="mech-action-btn w-100 py-3">
+                        <i class="fas fa-cart-plus me-2"></i> ADD TO LOADOUT
+                    </button>
+                </form>
+
+                <div class="mt-5">
+                    <h5 class="fw-bold text-uppercase" style="font-family: 'Rajdhani'; color: var(--accent);">System Overview</h5>
+                    <ul class="list-unstyled text-secondary small">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Comprehensive Edexcel Past Papers</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> High-resolution Laser Printing</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Durable Spiral Binding for 360° Use</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const zoomBox = document.getElementById('zoom-box');
+    const mainImg = document.getElementById('main-img');
+
+    zoomBox.addEventListener('mousemove', (e) => {
+        const { left, top, width, height } = zoomBox.getBoundingClientRect();
+        const x = ((e.clientX - left) / width) * 100;
+        const y = ((e.clientY - top) / height) * 100;
+        mainImg.style.transformOrigin = `${x}% ${y}%`;
+        mainImg.style.transform = "scale(2.5)";
+    });
+
+    zoomBox.addEventListener('mouseleave', () => {
+        mainImg.style.transform = "scale(1)";
+        mainImg.style.transformOrigin = "center center";
+    });
+
+    const fromSelect = document.getElementById('from-select');
+    const toSelect = document.getElementById('to-select');
+
+    fromSelect.addEventListener('change', () => {
+        const fromVal = fromSelect.value;
+        Array.from(toSelect.options).forEach(opt => {
+            if(opt.value && opt.value < fromVal) {
+                opt.disabled = true;
+                opt.style.opacity = '0.3';
+            } else {
+                opt.disabled = false;
+                opt.style.opacity = '1';
+            }
+        });
+    });
+</script>
+{% endblock %}
