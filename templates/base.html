@@ -1,13 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Paper Genius</title>
+    <!-- 1. DYNAMIC TITLE (Crucial for Google) -->
+    <!-- Default is "Paper Genius | ..." but individual pages can overwrite this -->
+    <title>{% block title %}Paper Genius | Premium Edexcel Past Paper Books in Sri Lanka{% endblock %}</title>
+    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
+    <!-- 2. META DESCRIPTION (What shows up in Google Search Results) -->
+    <meta name="description" content="{% block description %}Order high-quality printed Edexcel past paper books, custom bound exam resources, and study materials. Fast delivery across Sri Lanka.{% endblock %}">
+    
+    <!-- 3. KEYWORDS (Helps slightly with search context) -->
+    <meta name="keywords" content="Edexcel, Past Papers, GCE AL, IGCSE, Printed Papers, Exam Books, Sri Lanka, Paper Genius, Education, Past Paper Books">
+    
+    <!-- 4. OPEN GRAPH (Makes your links look good on WhatsApp/Facebook) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="{% block og_title %}Paper Genius - Premium Past Paper Books{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Stop printing at home. Get professionally bound Edexcel past paper books delivered to your door.{% endblock %}">
+    <!-- Ensure 'icon.png' exists in your static folder -->
+    <meta property="og:image" content="{{ url_for('static', filename='icon.png', _external=True) }}">
+
+    <!-- CSS Links -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css')}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css')}}">
+    
     {% block head %} {% endblock %}
     
     <style>
@@ -60,7 +79,6 @@
                 <li><a href="/" class="mech-item">HOME <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
                 <li><a href="/About" class="mech-item">ABOUT <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
                 <li><a href="/Shop" class="mech-item">SHOP <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
-
                 <li><a href="/Contact" class="mech-item">CONTACT <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
                 <li><a href="{{ url_for('ai.ai_interface') }}" class="mech-item" style="color: var(--accent);">GENIUS AI <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
             </ul>
@@ -105,7 +123,6 @@
             <a href="{{ url_for('ai.ai_interface') }}" class="mech-mobile-link" style="color: var(--accent);">GENIUS AI</a>
             
             {% if g.user %}
-                <!-- Mobile User Links -->
                 <a href="/Profile" class="mech-mobile-link" style="color: var(--accent);">MY PROFILE</a>
                 <a href="/MyOrders" class="mech-mobile-link" style="color: var(--accent);">MY ORDERS</a>
             {% endif %}
