@@ -1,28 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- 1. DYNAMIC TITLE (Crucial for Google) -->
-    <!-- Default is "Paper Genius | ..." but individual pages can overwrite this -->
-    <title>{% block title %}Paper Genius | Premium Edexcel Past Paper Books in Sri Lanka{% endblock %}</title>
-    
+    <title>{% block title %}Paper Genius | Premium Edexcel Past Paper Books Sri Lanka{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <!-- 2. META DESCRIPTION (What shows up in Google Search Results) -->
-    <meta name="description" content="{% block description %}Order high-quality printed Edexcel past paper books, custom bound exam resources, and study materials. Fast delivery across Sri Lanka.{% endblock %}">
-    
-    <!-- 3. KEYWORDS (Helps slightly with search context) -->
-    <meta name="keywords" content="Edexcel, Past Papers, GCE AL, IGCSE, Printed Papers, Exam Books, Sri Lanka, Paper Genius, Education, Past Paper Books">
-    
-    <!-- 4. OPEN GRAPH (Makes your links look good on WhatsApp/Facebook) -->
+    <meta name="google-site-verification" content="Y6iYEmYynj_EqLRGxjha8tIm0jkHC7N1MIProixk5hc" />
+    <meta name="description" content="{% block description %}Buy high-quality printed Edexcel and IGCSE past paper books in Sri Lanka. Custom bound resources for Pure Maths, Physics, Chemistry and more with island-wide delivery.{% endblock %}">
+    <meta name="keywords" content="Edexcel Past Papers Sri Lanka, IGCSE Past Paper Books, Buy Edexcel Books Colombo, Pure Maths 1 Past Papers, Chemistry Custom Exam Books, Paper Genius Sri Lanka, Exam Resources Colombo">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.url }}">
-    <meta property="og:title" content="{% block og_title %}Paper Genius - Premium Past Paper Books{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}Stop printing at home. Get professionally bound Edexcel past paper books delivered to your door.{% endblock %}">
-    <!-- Ensure 'icon.png' exists in your static folder -->
+    <meta property="og:title" content="{% block og_title %}Paper Genius | Next-Gen Edexcel Resources Sri Lanka{% endblock %}">
+    <meta property="og:description" content="Professionally bound Edexcel past paper books with custom designs. Fast delivery across Sri Lanka.">
     <meta property="og:image" content="{{ url_for('static', filename='icon.png', _external=True) }}">
 
-    <!-- CSS Links -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css')}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css')}}">
@@ -30,7 +20,6 @@
     {% block head %} {% endblock %}
     
     <style>
-        /* Custom Dropdown Styles to match Mech Theme */
         .dropdown-menu-mech {
             background-color: var(--bg-secondary);
             border: 1px solid var(--accent);
@@ -67,7 +56,7 @@
             
             <a class="mech-brand" href="/">
                 <div class="mech-logo-box">
-                    <img src="{{ url_for('static', filename='icon.png')}}" alt="PG">
+                    <img src="{{ url_for('static', filename='icon.png')}}" alt="Paper Genius Logo">
                 </div>
                 <div class="brand-info">
                     <span class="brand-title">PAPER GENIUS</span>
@@ -85,10 +74,9 @@
 
             <div class="mech-controls">
                 
-                <a class="mech-btn" href="/Cart"><i class="fa fa-shopping-cart"></i></a>
+                <a class="mech-btn" href="/Cart" aria-label="View Cart"><i class="fa fa-shopping-cart"></i></a>
 
                 {% if g.user %}
-                    <!-- DROPDOWN USER MENU -->
                     <div class="mech-user-display dropdown">
                         <a href="#" class="text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--text-primary); display: flex; flex-direction: column; align-items: flex-end; cursor: pointer;">
                             <span class="user-label">USER:</span>
@@ -102,15 +90,15 @@
                         </ul>
                     </div>
                 {% else %}
-                    <a class="mech-btn" href="/Login"><i class="fa fa-user"></i></a>
-                    <a class="mech-btn" href="/Register"><i class="fa fa-key"></i></a>
+                    <a class="mech-btn" href="/Login" aria-label="Login"><i class="fa fa-user"></i></a>
+                    <a class="mech-btn" href="/Register" aria-label="Register"><i class="fa fa-key"></i></a>
                 {% endif %}
 
-                <button class="mech-toggle" id="theme-toggle">
+                <button class="mech-toggle" id="theme-toggle" aria-label="Toggle Theme">
                     <div class="toggle-track"><div class="toggle-switch"></div></div>
                 </button>
 
-                <button class="mech-btn mobile-menu-btn" onclick="toggleMobileMenu()">
+                <button class="mech-btn mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Open Menu">
                     <i class="fa fa-bars"></i>
                 </button>
             </div>
@@ -147,33 +135,31 @@
                     <h2 class="h2">LINKS</h2>
                     <ul class="list-unstyled">
                         <li><a href="/">Home</a></li>
-                        <li><a href="/About">About</a></li>
-                        <li><a href="/Shop">Shop</a></li>                        
-                        <li><a href="/Contact">Contact</a></li>
-                        <li><a href="{{ url_for('ai.ai_interface') }}">Genius AI</a></li>
+                        <li><a href="/About">About Paper Genius</a></li>
+                        <li><a href="/Shop">Shop Past Papers</a></li>                        
+                        <li><a href="/Contact">Contact Support</a></li>
+                        <li><a href="{{ url_for('ai.ai_interface') }}">Genius AI Assistant</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
                     <h2 class="h2">SOCIAL</h2>
-                    <a href="#" class="mech-btn" style="display:inline-flex; width:40px;"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="mech-btn" style="display:inline-flex; width:40px;"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="mech-btn" style="display:inline-flex; width:40px;" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="mech-btn" style="display:inline-flex; width:40px;" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>
         <div class="mech-copyright text-center">
-            <p>&copy; 2025 Paper Genius | Dev by Amodh Gunawardana</p>
+            <p>&copy; 2026 Paper Genius Sri Lanka | Developed by Amodh Gunawardana</p>
         </div>
     </footer>
 
     <script src="{{url_for('static',filename='js/jquery-1.11.0.min.js')}}"></script>
     <script src="{{url_for('static',filename='js/bootstrap.bundle.min.js')}}"></script>
     <script>
-        // Loader
         window.onload = function() {
             setTimeout(() => { document.getElementById('loader-wrapper').style.display = 'none'; }, 1500);
         };
 
-        // Theme
         const btn = document.getElementById('theme-toggle');
         const html = document.documentElement;
         if(localStorage.getItem('theme')) html.setAttribute('data-theme', localStorage.getItem('theme'));
@@ -184,7 +170,6 @@
             localStorage.setItem('theme', theme);
         });
 
-        // Mobile Menu Toggle
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('active');
