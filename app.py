@@ -427,5 +427,12 @@ def contact():
         success = True
     return render_template("contact.html", success=success)
 
+@app.route("/Product/<int:item_id>")
+def product_detail(item_id):
+    item_obj = db.session.get(items, item_id)
+    if not item_obj:
+        return redirect(url_for('shop'))
+    return render_template("product_detail.html", item=item_obj)
+
 if __name__ == "__main__":
     app.run(debug=False, host='0.0.0.0')
