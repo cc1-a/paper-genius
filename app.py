@@ -58,21 +58,20 @@ def sitemap():
         base_url = "https://papergenius.vercel.app"
         xml_content = '<?xml version="1.0" encoding="UTF-8"?>'
         xml_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        
         static_pages = [
             {"loc": f"{base_url}/", "pri": "1.0"},
             {"loc": f"{base_url}/Shop", "pri": "0.9"},
             {"loc": f"{base_url}/About", "pri": "0.8"},
             {"loc": f"{base_url}/Contact", "pri": "0.7"}
         ]
+        
         for page in static_pages:
             xml_content += f"<url><loc>{page['loc']}</loc><priority>{page['pri']}</priority></url>"
         
-        try:
-            all_shop_items = items.query.all()
-            for item in all_shop_items:
-                xml_content += f"<url><loc>{base_url}/Product/{item.id}</loc><priority>0.8</priority></url>"
-        except:
-            pass
+        all_shop_items = db.session.execute(db.select(items)).scalars().all()
+        for item in all_shop_items:
+            xml_content += f"<url><loc>{base_url}/Product/{item.id}</loc><priority>0.8</priority></url>"
             
         xml_content += '</urlset>'
         response = make_response(xml_content.strip())
@@ -91,7 +90,7 @@ def login():
         email = request.form.get('Email')
         password = request.form.get('Password')
         error = None
-        user_check = users.query.filter_by(email=email).first()
+        user_check = db.session.execute(db.select(users).filter_by(email=email)).scalar_one_or_none()
         if user_check is None or not check_password_hash(user_check.password, password):
             error = "Invalid email or password."
         if error is None:
@@ -116,7 +115,7 @@ def sign_up():
         number = request.form.get('phone_number')
         address = request.form.get('address')
         town = request.form.get('town')
-        existing_user = users.query.filter_by(email=email).first()
+        existing_user = db.session.execute(db.select(users).filter_by(email=email)).scalar_one_or_none()
         if existing_user:
             return render_template("sign_up.html", error="Email already registered")
         hashed_pw = generate_password_hash(password)
@@ -149,12 +148,12 @@ def profile():
 @app.route("/MyOrders")
 def my_orders():
     if g.user is None: return redirect(url_for('login'))
-    user_orders = orders.query.filter_by(user_id=g.user.id).order_by(orders.order_date.desc()).all()
+    user_orders = db.session.execute(db.select(orders).filter_by(user_id=g.user.id).order_by(orders.order_date.desc())).scalars().all()
     return render_template("my_orders.html", orders=user_orders)
 
 @app.route("/Shop", methods=["POST", "GET"])
 def shop():
-    all_items = items.query.all()
+    all_items = db.session.execute(db.select(items)).scalars().all()
     if request.method == "POST":
         if g.user is None: return redirect(url_for('login'))
         item_id = request.form.get('item_id')
@@ -185,7 +184,7 @@ def shop():
 @app.route("/Cart")
 def carts():
     if g.user is None: return redirect(url_for('login'))
-    user_carts = cart.query.filter_by(user_id=g.user.id).all()
+    user_carts = db.session.execute(db.select(cart).filter_by(user_id=g.user.id)).scalars().all()
     return render_template("cart.html", cart=user_carts)
 
 @app.route("/Cart/Edit/<int:cart_id>", methods=["GET", "POST"])
@@ -230,7 +229,7 @@ def checkout():
     selected_ids = request.form.getlist('selected_cart_ids')
     user_comments = request.form.get('user_comments', '')
     if not selected_ids: return redirect(url_for('carts'))
-    cart_items = cart.query.filter(cart.user_id == g.user.id, cart.id.in_(selected_ids)).all()
+    cart_items = db.session.execute(db.select(cart).filter(cart.user_id == g.user.id, cart.id.in_(selected_ids))).scalars().all()
     if not cart_items: return redirect(url_for('carts'))
     total_price = sum(item.price for item in cart_items if item.price)
     items_summary = [f"{item.name} [{item.design_type}] ({item.selected_years[0]}-{item.selected_years[-1]})" for item in cart_items]
@@ -256,7 +255,7 @@ def admin():
     if request.method == "POST":
         username_input = request.form.get('username')
         password_input = request.form.get('password')
-        user = users.query.filter((users.email == username_input) | (users.name == username_input)).first()
+        user = db.session.execute(db.select(users).filter((users.email == username_input) | (users.name == username_input))).scalar_one_or_none()
         if user:
             if check_password_hash(user.password, password_input):
                 if user.level == "Admin":
@@ -275,19 +274,19 @@ def admin():
 @app.route("/admin/dashboard")
 @admin_required
 def admin_dashboard():
-    all_items = items.query.all()
+    all_items = db.session.execute(db.select(items)).scalars().all()
     return render_template('/admin/admin_dashboard.html', items=all_items)
 
 @app.route("/admin/users")
 @admin_required
 def admin_users():
-    all_users = users.query.all()
+    all_users = db.session.execute(db.select(users)).scalars().all()
     return render_template('/admin/users.html', users=all_users)
 
 @app.route("/admin/orders")
 @admin_required
 def admin_orders():
-    all_orders = orders.query.order_by(orders.order_date.desc()).all()
+    all_orders = db.session.execute(db.select(orders).order_by(orders.order_date.desc())).scalars().all()
     return render_template('/admin/orders.html', orders=all_orders)
 
 @app.route("/admin/update_order/<int:order_id>", methods=["POST"])
@@ -315,7 +314,7 @@ def delete_item(item_id):
 def delete_user(user_id):
     user_to_delete = db.session.get(users, user_id)
     if user_to_delete:
-        cart.query.filter(cart.user_id == user_id).delete()
+        db.session.execute(db.delete(cart).where(cart.user_id == user_id))
         db.session.delete(user_to_delete)
         db.session.commit()
     return redirect(url_for('admin_users'))
