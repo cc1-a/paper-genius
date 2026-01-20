@@ -1,4 +1,5 @@
 import os
+import re
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, session, g, make_response, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -19,6 +20,17 @@ load_dotenv()
 
 app = Flask(__name__)
 app.register_blueprint(ai_bp)
+
+# --- SEO HELPER: SLUGIFY ---
+def slugify(text):
+    """Converts 'Pure Maths 1' into 'pure-maths-1' for SEO URLs"""
+    text = text.lower().strip()
+    text = re.sub(r'[^a-z0-9\s-]', '', text)
+    text = re.sub(r'[\s-]+', '-', text)
+    return text
+
+# Register filter so we can use {{ item.name|slugify }} in HTML
+app.jinja_env.filters['slugify'] = slugify
 
 database_url = os.getenv('DATABASE_URL', 'sqlite:///database.db')
 if database_url.startswith("postgres://"):
@@ -74,7 +86,9 @@ def sitemap():
         
         all_shop_items = db.session.execute(db.select(items)).scalars().all()
         for item in all_shop_items:
-            xml_content += f"<url><loc>{base_url}/Product/{item.id}</loc><priority>0.8</priority></url>"
+            # SEO UPDATE: Include the name in the URL
+            slug = slugify(item.name)
+            xml_content += f"<url><loc>{base_url}/Product/{item.id}/{slug}</loc><priority>0.8</priority></url>"
             
         xml_content += '</urlset>'
         response = make_response(xml_content.strip())
@@ -458,11 +472,21 @@ def contact():
         success = True
     return render_template("contact.html", success=success)
 
+# SEO ROUTING: Two routes for the same product
 @app.route("/Product/<int:item_id>")
-def product_detail(item_id):
+@app.route("/Product/<int:item_id>/<string:slug>")
+def product_detail(item_id, slug=None):
     item_obj = db.session.get(items, item_id)
     if not item_obj:
         return redirect(url_for('shop'))
+    
+    # 301 REDIRECT FOR PREMIUM SEO
+    # If the user visits /Product/55, we force them to /Product/55/law-unit-2
+    # This teaches Google that the long URL is the "real" one.
+    correct_slug = slugify(item_obj.name)
+    if slug != correct_slug:
+        return redirect(url_for('product_detail', item_id=item_id, slug=correct_slug), code=301)
+
     return render_template("product_detail.html", item=item_obj)
 
 @app.errorhandler(404)
