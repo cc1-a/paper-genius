@@ -1,23 +1,38 @@
 {% extends "base.html" %}
 
 {% block head %}
+<meta name="description" content="The #1 Shop for Printed Edexcel & Cambridge Past Paper Books in Sri Lanka. Buy Pure Maths, Physics, Chemistry, Biology & Law Unit Papers. Fast Delivery to Colombo, Kandy, Galle & Island-wide.">
+<meta name="keywords" content="Edexcel Past Papers Sri Lanka, Buy Past Papers Colombo, Edexcel Books Kottawa, Cambridge Exam Papers, Pure Maths 1 Price Sri Lanka, A Level Past Papers, IGCSE Books">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org/",
-  "@type": "LocalBusiness",
-  "name": "Paper Genius",
+  "@type": "BookStore",
+  "name": "Paper Genius Sri Lanka",
   "image": "{{ url_for('static', filename='icon.png', _external=True) }}",
   "description": "Premium provider of printed Edexcel and IGCSE past paper books in Sri Lanka.",
+  "url": "https://papergenius.vercel.app",
+  "telephone": "+94724786229",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Kottawa",
     "addressLocality": "Colombo",
-    "addressRegion": "Western Province",
     "addressCountry": "LK"
   },
-  "telephone": "+94724786229",
-  "url": "{{ request.url_root }}",
-  "priceRange": "LKR"
+  "priceRange": "LKR",
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "opens": "00:00",
+    "closes": "23:59"
+  }
 }
 </script>
 {% endblock %}
