@@ -124,7 +124,8 @@
     <div class="mech-grid" id="inventory-grid">
         {% for item in items %}
         <div class="shop-item" data-name="{{ item.name.lower() }}">
-            <a href="/Product/{{ item.id }}" class="mech-card-link">
+            <!-- SEO LINK UPDATE: Using the slugify filter we made in app.py -->
+            <a href="/Product/{{ item.id }}/{{ item.name|slugify }}" class="mech-card-link">
                 <div class="mech-card unit-card">
                     
                     <div class="unit-image-wrapper">
@@ -137,7 +138,6 @@
                         </div>
 
                         {% if item.img.startswith('http') %}
-                            <!-- LAZY LOADING ENABLED -->
                             <img src="{{ item.img }}" class="unit-image" alt="{{item.name}} Cover" loading="lazy">
                         {% else %}
                             <img src="{{ url_for('static', filename=item.img)}}" class="unit-image" alt="{{item.name}} Cover" loading="lazy">
@@ -198,7 +198,6 @@ function applyFilters() {
         } else if (currentCategory === 'math') {
             matchesCategory = name.includes('math') || name.includes('mechanics') || name.includes('statistics') || name.includes('pure') || name.includes('decision') || name.includes('further');
         } else if (currentCategory === 'it') {
-            // Strict check for "it unit" to match "IT Unit 1", "IT Unit 2"
             matchesCategory = name.includes('it unit');
         } else if (currentCategory === 'business') {
             matchesCategory = name.includes('business');
@@ -211,7 +210,6 @@ function applyFilters() {
         } else if (currentCategory === 'law') {
             matchesCategory = name.includes('law');
         } else {
-            // physics, chemistry, biology
             matchesCategory = name.includes(currentCategory);
         }
 
