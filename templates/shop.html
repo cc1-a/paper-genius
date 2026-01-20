@@ -108,15 +108,17 @@
 
     <!-- FILTER BUTTONS -->
     <div class="filter-wrapper">
-        <button class="filter-btn active" onclick="filterCategory('all')">ALL UNITS</button>
+        <button class="filter-btn active" onclick="filterCategory('all')">ALL</button>
         <button class="filter-btn" onclick="filterCategory('math')">MATH</button>
         <button class="filter-btn" onclick="filterCategory('physics')">PHYSICS</button>
         <button class="filter-btn" onclick="filterCategory('chemistry')">CHEMISTRY</button>
         <button class="filter-btn" onclick="filterCategory('biology')">BIOLOGY</button>
+        <button class="filter-btn" onclick="filterCategory('it')">IT & COMP. SCI</button>
         <button class="filter-btn" onclick="filterCategory('business')">BUSINESS</button>
         <button class="filter-btn" onclick="filterCategory('economics')">ECONOMICS</button>
         <button class="filter-btn" onclick="filterCategory('accounting')">ACCOUNTING</button>
-        <button class="filter-btn" onclick="filterCategory('psychology')">PSYCHOLOGY</button>
+        <button class="filter-btn" onclick="filterCategory('english')">ENGLISH</button>
+        <button class="filter-btn" onclick="filterCategory('history')">HISTORY</button>
     </div>
 
     <div class="mech-grid" id="inventory-grid">
@@ -188,18 +190,24 @@ function applyFilters() {
         // 1. Check Search Match
         const matchesSearch = name.includes(currentSearch);
         
-        // 2. Check Category Match (Simple keyword matching)
+        // 2. Check Category Match (Advanced Keyword Matching)
         let matchesCategory = false;
         if (currentCategory === 'all') {
             matchesCategory = true;
         } else if (currentCategory === 'math') {
-            matchesCategory = name.includes('math') || name.includes('mechanics') || name.includes('statistics') || name.includes('pure') || name.includes('decision');
+            matchesCategory = name.includes('math') || name.includes('mechanics') || name.includes('statistics') || name.includes('pure') || name.includes('decision') || name.includes('further');
+        } else if (currentCategory === 'it') {
+            matchesCategory = name.includes('information') || name.includes('unit') || name.includes('it') || name.includes('technology');
         } else if (currentCategory === 'business') {
             matchesCategory = name.includes('business');
         } else if (currentCategory === 'economics') {
             matchesCategory = name.includes('econ');
         } else if (currentCategory === 'accounting') {
             matchesCategory = name.includes('account');
+        } else if (currentCategory === 'english') {
+            matchesCategory = name.includes('english') || name.includes('literature') || name.includes('language');
+        } else if (currentCategory === 'history') {
+            matchesCategory = name.includes('history');
         } else {
             // physics, chemistry, biology, psychology
             matchesCategory = name.includes(currentCategory);
