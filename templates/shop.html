@@ -79,12 +79,12 @@
 
     /* FILTER BUTTONS */
     .filter-wrapper {
-        display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 30px;
+        display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 30px;
     }
     .filter-btn {
         background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary);
-        padding: 8px 16px; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase;
-        cursor: pointer; transition: 0.3s;
+        padding: 8px 14px; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase;
+        cursor: pointer; transition: 0.3s; font-size: 0.9rem;
     }
     .filter-btn:hover, .filter-btn.active {
         background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent-glow); border-color: var(--accent);
@@ -113,12 +113,12 @@
         <button class="filter-btn" onclick="filterCategory('physics')">PHYSICS</button>
         <button class="filter-btn" onclick="filterCategory('chemistry')">CHEMISTRY</button>
         <button class="filter-btn" onclick="filterCategory('biology')">BIOLOGY</button>
-        <button class="filter-btn" onclick="filterCategory('it')">IT & COMP. SCI</button>
+        <button class="filter-btn" onclick="filterCategory('it')">IT</button>
         <button class="filter-btn" onclick="filterCategory('business')">BUSINESS</button>
         <button class="filter-btn" onclick="filterCategory('economics')">ECONOMICS</button>
         <button class="filter-btn" onclick="filterCategory('accounting')">ACCOUNTING</button>
-        <button class="filter-btn" onclick="filterCategory('english')">ENGLISH</button>
-        <button class="filter-btn" onclick="filterCategory('history')">HISTORY</button>
+        <button class="filter-btn" onclick="filterCategory('psychology')">PSYCHOLOGY</button>
+        <button class="filter-btn" onclick="filterCategory('law')">LAW</button>
     </div>
 
     <div class="mech-grid" id="inventory-grid">
@@ -137,7 +137,7 @@
                         </div>
 
                         {% if item.img.startswith('http') %}
-                            <!-- LAZY LOADING ADDED -->
+                            <!-- LAZY LOADING ENABLED -->
                             <img src="{{ item.img }}" class="unit-image" alt="{{item.name}} Cover" loading="lazy">
                         {% else %}
                             <img src="{{ url_for('static', filename=item.img)}}" class="unit-image" alt="{{item.name}} Cover" loading="lazy">
@@ -190,26 +190,28 @@ function applyFilters() {
         // 1. Check Search Match
         const matchesSearch = name.includes(currentSearch);
         
-        // 2. Check Category Match (Advanced Keyword Matching)
+        // 2. Check Category Match
         let matchesCategory = false;
+        
         if (currentCategory === 'all') {
             matchesCategory = true;
         } else if (currentCategory === 'math') {
             matchesCategory = name.includes('math') || name.includes('mechanics') || name.includes('statistics') || name.includes('pure') || name.includes('decision') || name.includes('further');
         } else if (currentCategory === 'it') {
-            matchesCategory = name.includes('information') || name.includes('unit') || name.includes('it') || name.includes('technology');
+            // Strict check for "it unit" to match "IT Unit 1", "IT Unit 2"
+            matchesCategory = name.includes('it unit');
         } else if (currentCategory === 'business') {
             matchesCategory = name.includes('business');
         } else if (currentCategory === 'economics') {
             matchesCategory = name.includes('econ');
         } else if (currentCategory === 'accounting') {
             matchesCategory = name.includes('account');
-        } else if (currentCategory === 'english') {
-            matchesCategory = name.includes('english') || name.includes('literature') || name.includes('language');
-        } else if (currentCategory === 'history') {
-            matchesCategory = name.includes('history');
+        } else if (currentCategory === 'psychology') {
+            matchesCategory = name.includes('psychology');
+        } else if (currentCategory === 'law') {
+            matchesCategory = name.includes('law');
         } else {
-            // physics, chemistry, biology, psychology
+            // physics, chemistry, biology
             matchesCategory = name.includes(currentCategory);
         }
 
