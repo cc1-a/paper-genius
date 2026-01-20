@@ -68,6 +68,7 @@
                 <li><a href="/" class="mech-item">HOME <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
                 <li><a href="/About" class="mech-item">ABOUT <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
                 <li><a href="/Shop" class="mech-item">SHOP <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
+                <li><a href="/Resources" class="mech-item">RESOURCES <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
                 <li><a href="/Contact" class="mech-item">CONTACT <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
                 <li><a href="{{ url_for('ai.ai_interface') }}" class="mech-item" style="color: var(--accent);">GENIUS AI <span class="reticle top-left"></span><span class="reticle bottom-right"></span></a></li>
             </ul>
@@ -108,6 +109,7 @@
             <a href="/" class="mech-mobile-link">HOME</a>
             <a href="/About" class="mech-mobile-link">ABOUT</a>
             <a href="/Shop" class="mech-mobile-link">SHOP</a>
+            <a href="/Resources" class="mech-mobile-link">RESOURCES</a>
             <a href="{{ url_for('ai.ai_interface') }}" class="mech-mobile-link" style="color: var(--accent);">GENIUS AI</a>
             
             {% if g.user %}
@@ -137,6 +139,7 @@
                         <li><a href="/">Home</a></li>
                         <li><a href="/About">About Paper Genius</a></li>
                         <li><a href="/Shop">Shop Past Papers</a></li>                        
+                        <li><a href="/Resources">Free Downloads</a></li>
                         <li><a href="/Contact">Contact Support</a></li>
                         <li><a href="{{ url_for('ai.ai_interface') }}">Genius AI Assistant</a></li>
                     </ul>
@@ -144,7 +147,7 @@
                 <div class="col-md-4">
                     <h2 class="h2">SOCIAL</h2>
                     <a href="#" class="mech-btn" style="display:inline-flex; width:40px;" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/papers.genius/" class="mech-btn" style="display:inline-flex; width:40px;" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.instagram.com/papers.genius/" target="_blank" class="mech-btn" style="display:inline-flex; width:40px;" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>
@@ -156,7 +159,6 @@
     <script src="{{url_for('static',filename='js/jquery-1.11.0.min.js')}}"></script>
     <script src="{{url_for('static',filename='js/bootstrap.bundle.min.js')}}"></script>
     <script>
-        // FIXED LOADER: Uses DOMContentLoaded instead of window.onload
         document.addEventListener("DOMContentLoaded", function() {
             setTimeout(() => { 
                 const loader = document.getElementById('loader-wrapper');
