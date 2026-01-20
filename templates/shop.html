@@ -12,7 +12,6 @@
         padding: 0;
         overflow: hidden;
         position: relative;
-        /* Remove fixed aspect ratio from card, we apply it to the image wrapper instead */
         border: 1px solid var(--border-color);
         background: var(--bg-secondary);
         display: flex;
@@ -25,14 +24,13 @@
         width: 100%;
         aspect-ratio: 1 / 1.414; /* A4 Ratio */
         overflow: hidden;
-        background: #fff; /* Most covers are white, this blends the edges */
+        background: #fff;
         position: relative;
     }
 
     .unit-image {
         width: 100%;
         height: 100%;
-        /* 2. CONTAIN ensures the whole page is visible without cropping */
         object-fit: contain; 
         transition: transform 0.6s ease, filter 0.4s ease;
     }
@@ -43,91 +41,54 @@
         filter: brightness(0.8);
     }
 
-    /* 3. THE HUD OVERLAY (Only visible on hover) */
+    /* 3. THE HUD OVERLAY */
     .scan-overlay {
-        position: absolute;
-        inset: 0;
-        z-index: 5;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        background: rgba(0, 210, 255, 0.1); /* Subtle tint */
+        position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; transition: opacity 0.3s ease;
+        background: rgba(0, 210, 255, 0.1);
     }
-
     .view-specs-container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0.8);
-        z-index: 10;
-        opacity: 0;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
+        z-index: 10; opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-
     .view-specs-box {
-        padding: 10px 20px;
-        border: 1px solid var(--accent);
-        background: rgba(0, 0, 0, 0.8);
-        box-shadow: 0 0 15px var(--accent);
-        white-space: nowrap;
+        padding: 10px 20px; border: 1px solid var(--accent); background: rgba(0, 0, 0, 0.8);
+        box-shadow: 0 0 15px var(--accent); white-space: nowrap;
     }
-
     .view-specs-text {
-        font-family: 'Rajdhani', sans-serif;
-        font-weight: 800;
-        color: var(--accent);
-        font-size: 0.8rem;
-        letter-spacing: 3px;
-        margin: 0;
+        font-family: 'Rajdhani', sans-serif; font-weight: 800; color: var(--accent); font-size: 0.8rem; letter-spacing: 3px; margin: 0;
     }
-
     .mech-card-link:hover .scan-overlay,
-    .mech-card-link:hover .view-specs-container {
-        opacity: 1;
-    }
-    
-    .mech-card-link:hover .view-specs-container {
-        transform: translate(-50%, -50%) scale(1);
-    }
+    .mech-card-link:hover .view-specs-container { opacity: 1; }
+    .mech-card-link:hover .view-specs-container { transform: translate(-50%, -50%) scale(1); }
 
-    /* 4. TITLE BAR (Moved below the image) */
+    /* 4. TITLE BAR */
     .unit-title-box {
-        width: 100%;
-        padding: 15px 10px;
-        background: var(--bg-secondary);
-        border-top: 1px solid var(--border-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 60px;
+        width: 100%; padding: 15px 10px; background: var(--bg-secondary); border-top: 1px solid var(--border-color);
+        display: flex; align-items: center; justify-content: center; min-height: 60px;
     }
-
     .unit-title-text {
-        font-family: 'Rajdhani', sans-serif;
-        font-weight: 700;
-        font-size: 0.95rem;
-        letter-spacing: 1px;
-        color: var(--text-primary);
-        text-transform: uppercase;
-        margin: 0;
-        text-align: center;
-        line-height: 1.2;
+        font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.95rem; letter-spacing: 1px;
+        color: var(--text-primary); text-transform: uppercase; margin: 0; text-align: center; line-height: 1.2;
     }
-
     .scan-line {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 2px;
-        background: var(--accent);
-        box-shadow: 0 0 8px var(--accent);
-        opacity: 0; z-index: 6;
+        position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--accent);
+        box-shadow: 0 0 8px var(--accent); opacity: 0; z-index: 6;
     }
-
-    .mech-card-link:hover .scan-line {
-        animation: scanMove 2s linear infinite;
-        opacity: 0.8;
-    }
-
+    .mech-card-link:hover .scan-line { animation: scanMove 2s linear infinite; opacity: 0.8; }
     @keyframes scanMove { 0% { top: 0%; } 100% { top: 100%; } }
+
+    /* FILTER BUTTONS */
+    .filter-wrapper {
+        display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 30px;
+    }
+    .filter-btn {
+        background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary);
+        padding: 8px 16px; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase;
+        cursor: pointer; transition: 0.3s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+        background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent-glow); border-color: var(--accent);
+    }
 </style>
 {% endblock %}
 
@@ -135,7 +96,8 @@
 <div class="container py-5">
     <h1 class="text-center mb-4" style="font-family: 'Rajdhani', sans-serif; letter-spacing: 5px; font-weight: 800;">SEARCH THE UNIT</h1>
     
-    <div class="row justify-content-center mb-5">
+    <!-- SEARCH INPUT -->
+    <div class="row justify-content-center mb-4">
         <div class="col-md-6">
             <div class="position-relative">
                 <i class="fas fa-search position-absolute" style="left: 15px; top: 18px; color: var(--accent);"></i>
@@ -144,13 +106,25 @@
         </div>
     </div>
 
+    <!-- FILTER BUTTONS -->
+    <div class="filter-wrapper">
+        <button class="filter-btn active" onclick="filterCategory('all')">ALL UNITS</button>
+        <button class="filter-btn" onclick="filterCategory('math')">MATH</button>
+        <button class="filter-btn" onclick="filterCategory('physics')">PHYSICS</button>
+        <button class="filter-btn" onclick="filterCategory('chemistry')">CHEMISTRY</button>
+        <button class="filter-btn" onclick="filterCategory('biology')">BIOLOGY</button>
+        <button class="filter-btn" onclick="filterCategory('business')">BUSINESS</button>
+        <button class="filter-btn" onclick="filterCategory('economics')">ECONOMICS</button>
+        <button class="filter-btn" onclick="filterCategory('accounting')">ACCOUNTING</button>
+        <button class="filter-btn" onclick="filterCategory('psychology')">PSYCHOLOGY</button>
+    </div>
+
     <div class="mech-grid" id="inventory-grid">
         {% for item in items %}
         <div class="shop-item" data-name="{{ item.name.lower() }}">
             <a href="/Product/{{ item.id }}" class="mech-card-link">
                 <div class="mech-card unit-card">
                     
-                    <!-- Top Section: Image -->
                     <div class="unit-image-wrapper">
                         <div class="scan-overlay"></div>
                         <div class="scan-line"></div>
@@ -161,13 +135,13 @@
                         </div>
 
                         {% if item.img.startswith('http') %}
-                            <img src="{{ item.img }}" class="unit-image" alt="{{item.name}} Cover">
+                            <!-- LAZY LOADING ADDED -->
+                            <img src="{{ item.img }}" class="unit-image" alt="{{item.name}} Cover" loading="lazy">
                         {% else %}
-                            <img src="{{ url_for('static', filename=item.img)}}" class="unit-image" alt="{{item.name}} Cover">
+                            <img src="{{ url_for('static', filename=item.img)}}" class="unit-image" alt="{{item.name}} Cover" loading="lazy">
                         {% endif %}
                     </div>
 
-                    <!-- Bottom Section: Title (Always visible, never overlaps) -->
                     <div class="unit-title-box">
                         <h4 class="unit-title-text">{{item.name}}</h4>
                     </div>
@@ -184,23 +158,62 @@
 </div>
 
 <script>
+let currentCategory = 'all';
+let currentSearch = '';
+
+// Category Filter Logic
+function filterCategory(category) {
+    currentCategory = category;
+    
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    applyFilters();
+}
+
+// Search Logic
 document.getElementById('unit-search').addEventListener('input', function(e) {
-    const term = e.target.value.toLowerCase();
+    currentSearch = e.target.value.toLowerCase();
+    applyFilters();
+});
+
+function applyFilters() {
     const items = document.querySelectorAll('.shop-item');
-    const noResults = document.getElementById('no-results');
-    let found = false;
+    let visibleCount = 0;
 
     items.forEach(item => {
         const name = item.getAttribute('data-name');
-        if (name.includes(term)) {
+        
+        // 1. Check Search Match
+        const matchesSearch = name.includes(currentSearch);
+        
+        // 2. Check Category Match (Simple keyword matching)
+        let matchesCategory = false;
+        if (currentCategory === 'all') {
+            matchesCategory = true;
+        } else if (currentCategory === 'math') {
+            matchesCategory = name.includes('math') || name.includes('mechanics') || name.includes('statistics') || name.includes('pure') || name.includes('decision');
+        } else if (currentCategory === 'business') {
+            matchesCategory = name.includes('business');
+        } else if (currentCategory === 'economics') {
+            matchesCategory = name.includes('econ');
+        } else if (currentCategory === 'accounting') {
+            matchesCategory = name.includes('account');
+        } else {
+            // physics, chemistry, biology, psychology
+            matchesCategory = name.includes(currentCategory);
+        }
+
+        if (matchesSearch && matchesCategory) {
             item.style.display = 'block';
-            found = true;
+            visibleCount++;
         } else {
             item.style.display = 'none';
         }
     });
 
-    noResults.classList.toggle('d-none', found);
-});
+    document.getElementById('no-results').classList.toggle('d-none', visibleCount > 0);
+}
 </script>
 {% endblock %}
