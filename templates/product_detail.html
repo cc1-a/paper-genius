@@ -19,6 +19,18 @@
     }
     .magnify-container img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.1s ease-out; transform-origin: center center; }
     .product-info { flex: 1; min-width: 320px; }
+    
+    /* PRICE BOX STYLE */
+    .price-display {
+        background: rgba(var(--accent-rgb), 0.05); 
+        border: 2px solid var(--accent); 
+        padding: 15px; 
+        text-align: center; 
+        margin-top: 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+    }
+
     @media (max-width: 992px) {
         .product-container { flex-direction: column; align-items: center; }
         .product-visual { position: static; width: 100%; }
@@ -58,17 +70,17 @@
                     
                     <div class="mb-3">
                         <label class="mech-label">COVER SPECIFICATION</label>
-                        <select name="cover_type" class="mech-input" required>
-                            <option value="Normal">Normal Cover (250gsm)</option>
+                        <select name="cover_type" id="cover-select" class="mech-input" required>
+                            <!-- Cleaned up labels as requested -->
+                            <option value="Normal">Normal Cover</option>
                             <option value="Custom">Custom Design</option>
-                            <option value="Minimalistic">Minimalistic (Clear View)</option>
+                            <option value="Minimalistic">Minimalistic (Clear)</option>
                         </select>
                     </div>
 
-                    <div class="row g-2 mb-4">
+                    <div class="row g-2 mb-2">
                         <div class="col-6">
                             <label class="mech-label">START YEAR</label>
-                            <!-- The list is sorted chronologically by Python before rendering -->
                             <select name="selected_year_from" id="from-select" class="mech-input" required>
                                 {% for year in item.years_available.keys()|sort %}
                                     <option value="{{ year }}">{{ year }}</option>
@@ -85,12 +97,20 @@
                         </div>
                     </div>
 
+                    <!-- DYNAMIC PRICE DISPLAY -->
+                    <div class="price-display">
+                        <h6 class="text-muted mb-1" style="font-family: 'Rajdhani'; letter-spacing: 1px;">ESTIMATED TOTAL</h6>
+                        <h2 class="mb-0 fw-bold text-success" style="font-family: 'Rajdhani';">
+                            LKR <span id="dynamic-price">...</span>
+                        </h2>
+                    </div>
+
                     <button type="submit" class="mech-action-btn w-100 py-3">
                         <i class="fas fa-cart-plus me-2"></i> ADD TO LOADOUT
                     </button>
                 </form>
 
-                <div class="mt-5">
+                <div class="mt-4">
                     <h5 class="fw-bold text-uppercase" style="font-family: 'Rajdhani'; color: var(--accent);">System Overview</h5>
                     <ul class="list-unstyled text-secondary small">
                         <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Comprehensive Edexcel Past Papers</li>
@@ -104,7 +124,69 @@
 </div>
 
 <script>
-    // --- 1. ZOOM LOGIC ---
+    // --- 1. DATA FROM FLASK (Page Counts) ---
+    // This injects the database dictionary directly into JS code
+    const yearsData = {{ item.years_available | tojson }};
+    // Get keys sorted alphabetically to match the HTML select order (Start/End years)
+    const sortedYears = Object.keys(yearsData).sort();
+
+    // --- 2. ELEMENTS ---
+    const coverSelect = document.getElementById('cover-select');
+    const fromSelect = document.getElementById('from-select');
+    const toSelect = document.getElementById('to-select');
+    const priceDisplay = document.getElementById('dynamic-price');
+
+    // --- 3. PRICING LOGIC ---
+    function updatePrice() {
+        // A. Prevent Invalid Dates
+        const startIndex = fromSelect.selectedIndex;
+        const endIndex = toSelect.selectedIndex;
+
+        // Loop through End Year options to disable past dates
+        for (let i = 0; i < toSelect.options.length; i++) {
+            if (i < startIndex) {
+                toSelect.options[i].disabled = true;
+                toSelect.options[i].style.color = '#ccc';
+            } else {
+                toSelect.options[i].disabled = false;
+                toSelect.options[i].style.color = 'var(--text-primary)';
+            }
+        }
+
+        // Auto-correct End Year if it's before Start Year
+        if (toSelect.selectedIndex < startIndex) {
+            toSelect.selectedIndex = startIndex;
+        }
+
+        // B. Calculate Price
+        // 1. Calculate Total Pages based on selected range
+        let totalPages = 0;
+        // Loop from Start Index to End Index (inclusive) using the sorted keys
+        for (let i = startIndex; i <= toSelect.selectedIndex; i++) {
+            let yearKey = sortedYears[i];
+            // Add pages for this year (default to 0 if missing)
+            totalPages += (yearsData[yearKey] || 0);
+        }
+
+        // 2. Determine Cover Cost
+        const coverType = coverSelect.value;
+        let coverCost = 200; // Normal
+        if (coverType === 'Custom') coverCost = 500;
+        if (coverType === 'Minimalistic') coverCost = 80;
+
+        // 3. Formula: (Pages * 5) + 400 Binding + Cover
+        const finalPrice = (totalPages * 5.0) + 400.0 + coverCost;
+
+        // C. Update UI
+        priceDisplay.innerText = finalPrice.toFixed(2);
+    }
+
+    // --- 4. EVENT LISTENERS ---
+    fromSelect.addEventListener('change', updatePrice);
+    toSelect.addEventListener('change', updatePrice);
+    coverSelect.addEventListener('change', updatePrice);
+
+    // --- 5. ZOOM LOGIC ---
     const zoomBox = document.getElementById('zoom-box');
     const mainImg = document.getElementById('main-img');
 
@@ -121,39 +203,7 @@
         mainImg.style.transformOrigin = "center center";
     });
 
-    // --- 2. DATE LOGIC (Prevents selecting past dates) ---
-    const fromSelect = document.getElementById('from-select');
-    const toSelect = document.getElementById('to-select');
-
-    function updateEndOptions() {
-        // Get the index of the selected start option (e.g., 0 for the first year, 5 for the 6th year)
-        const startIndex = fromSelect.selectedIndex;
-        
-        // Loop through all options in the "End Year" dropdown
-        for (let i = 0; i < toSelect.options.length; i++) {
-            if (i < startIndex) {
-                // Disable years BEFORE the start year
-                toSelect.options[i].disabled = true;
-                toSelect.options[i].style.color = '#ccc'; // Grey out
-            } else {
-                // Enable years AFTER or EQUAL to start year
-                toSelect.options[i].disabled = false;
-                toSelect.options[i].style.color = 'var(--text-primary)';
-            }
-        }
-
-        // AUTO-CORRECT: 
-        // If the current "End Year" is earlier than the new "Start Year", 
-        // automatically push the "End Year" forward to match the "Start Year".
-        if (toSelect.selectedIndex < startIndex) {
-            toSelect.selectedIndex = startIndex;
-        }
-    }
-
-    // Run when Start Year changes
-    fromSelect.addEventListener('change', updateEndOptions);
-
-    // Run once on page load to initialize correctly
-    updateEndOptions();
+    // Run once on load
+    updatePrice();
 </script>
 {% endblock %}
