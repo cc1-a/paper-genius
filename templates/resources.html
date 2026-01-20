@@ -1,165 +1,219 @@
 {% extends "base.html" %}
 
 {% block title %}Free Edexcel Past Paper PDF Downloads | Paper Genius Sri Lanka{% endblock %}
-{% block description %}Download free Edexcel IAL and Cambridge IGCSE past paper PDFs. Physics, Chemistry, Maths, Biology, Law, IT and more. Order printed books delivered island-wide.{% endblock %}
+{% block description %}Download free Edexcel IAL and Cambridge IGCSE past paper PDFs. Physics, Chemistry, Maths, Biology, Law, IT and more.{% endblock %}
+
+{% block head %}
+<style>
+    /* --- MOBILE OPTIMIZATIONS --- */
+    @media (max-width: 768px) {
+        .mech-hero-title { font-size: 2.2rem !important; }
+        .upsell-box { padding: 1.5rem !important; }
+        .mech-card { width: 100% !important; margin-bottom: 10px; }
+        .mech-panel { padding: 20px !important; margin: 20px 10px !important; }
+    }
+
+    .subject-icon {
+        color: var(--accent);
+        filter: drop-shadow(0 0 5px var(--accent-glow));
+        transition: 0.3s;
+    }
+    
+    .mech-card:hover .subject-icon {
+        transform: scale(1.1) rotate(5deg);
+        filter: drop-shadow(0 0 15px var(--accent));
+    }
+
+    .drive-link-btn {
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        background: transparent;
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 700;
+        letter-spacing: 1px;
+        transition: 0.3s;
+    }
+
+    .drive-link-btn:hover {
+        background: var(--accent);
+        color: #000;
+        box-shadow: 0 0 15px var(--accent-glow);
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-<div class="container py-5">
+<div class="container py-4">
     
+    <!-- 1. HEADER SECTION -->
     <div class="mech-panel text-center mb-5" style="border: 2px solid var(--accent); background: rgba(var(--accent-rgb), 0.05);">
-        <h1 class="display-4 fw-bold mb-3">DIGITAL LIBRARY</h1>
-        <p class="lead text-muted mb-4">Access our cloud database of past papers for free. View and download PDFs directly.</p>
+        <h1 class="mech-hero-title display-4 fw-bold mb-3" style="font-family: 'Rajdhani';">DIGITAL LIBRARY</h1>
+        <p class="text-muted mb-4">Central Database: Direct access to Past Paper PDF repositories.</p>
         
-        <div class="p-4 rounded" style="background: rgba(0,0,0,0.05); border: 1px dashed var(--accent);">
-            <h4 class="fw-bold text-success">⚠️ TIRED OF PRINTING AT HOME?</h4>
-            <p class="mb-3">Ink is expensive and organizing loose sheets is a mess. Get the <strong>Full Professionally Bound Book</strong> delivered to your doorstep.</p>
-            <a href="/Shop" class="mech-action-btn d-inline-block w-auto px-5">
-                <i class="fas fa-shopping-cart me-2"></i> BUY PRINTED BOOKS
+        <div class="upsell-box p-4 rounded" style="background: rgba(0,0,0,0.2); border: 1px dashed var(--accent);">
+            <h4 class="fw-bold text-success mb-2">⚠️ PROTOCOL REMINDER</h4>
+            <p class="small mb-3 text-secondary">Ink costs and organization overhead detected. Deploy professionally bound books for maximum efficiency.</p>
+            <a href="/Shop" class="mech-action-btn d-inline-block w-100 w-md-auto px-5" style="max-width: 300px;">
+                <i class="fas fa-shopping-cart me-2"></i> ACQUIRE PRINTED BOOKS
             </a>
         </div>
     </div>
 
-    <div class="row g-4">
+    <!-- 2. SUBJECT GRID -->
+    <div class="row g-4 px-2">
         
+        <!-- PURE MATHS -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-calculator fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">PURE MATHEMATICS</h3>
-                <p class="small text-muted">P1, P2, P3, P4</p>
-                <a href="https://drive.google.com/drive/folders/1G_k86e46rOJFLw6Oark8O-lrm1N1Vg9b?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-calculator fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">PURE MATHEMATICS</h3>
+                <p class="small text-muted mb-4">P1, P2, P3, P4 Modules</p>
+                <a href="https://drive.google.com/drive/folders/1G_k86e46rOJFLw6Oark8O-lrm1N1Vg9b?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- PHYSICS -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-atom fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">PHYSICS</h3>
-                <p class="small text-muted">Units 1 - 6</p>
-                <a href="https://drive.google.com/drive/folders/1tAZpc62YR-VH6rbvmZlOAvwGk_lUIVXX?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-atom fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">PHYSICS</h3>
+                <p class="small text-muted mb-4">Units 1 - 6 Resources</p>
+                <a href="https://drive.google.com/drive/folders/1tAZpc62YR-VH6rbvmZlOAvwGk_lUIVXX?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- CHEMISTRY -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-flask fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">CHEMISTRY</h3>
-                <p class="small text-muted">Units 1 - 6</p>
-                <a href="https://drive.google.com/drive/folders/1PnxxVD7pLET0AshO8oJbffu3Y8KROb0s?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-flask fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">CHEMISTRY</h3>
+                <p class="small text-muted mb-4">Units 1 - 6 Resources</p>
+                <a href="https://drive.google.com/drive/folders/1PnxxVD7pLET0AshO8oJbffu3Y8KROb0s?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- BIOLOGY -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-dna fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">BIOLOGY</h3>
-                <p class="small text-muted">Units 1 - 6</p>
-                <a href="https://drive.google.com/drive/folders/1Ot3EfXD3RwDa6aUh4PP5R18GphHVXz3g?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-dna fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">BIOLOGY</h3>
+                <p class="small text-muted mb-4">Units 1 - 6 Resources</p>
+                <a href="https://drive.google.com/drive/folders/1Ot3EfXD3RwDa6aUh4PP5R18GphHVXz3g?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- IT -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-laptop-code fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">IT</h3>
-                <p class="small text-muted">Information Technology Units</p>
-                <a href="https://drive.google.com/drive/folders/1rf6XUQsu65pcZ4ArpnupSbDUcKm5ouDq?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-laptop-code fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">IT</h3>
+                <p class="small text-muted mb-4">Information Technology Units</p>
+                <a href="https://drive.google.com/drive/folders/1rf6XUQsu65pcZ4ArpnupSbDUcKm5ouDq?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- ECONOMICS -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-chart-line fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">ECONOMICS</h3>
-                <p class="small text-muted">Units 1 - 4</p>
-                <a href="https://drive.google.com/drive/folders/1rRuUOhkQXTdaqjIAJZIQGWK43xNGtSIr?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-chart-line fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">ECONOMICS</h3>
+                <p class="small text-muted mb-4">Units 1 - 4 Resources</p>
+                <a href="https://drive.google.com/drive/folders/1rRuUOhkQXTdaqjIAJZIQGWK43xNGtSIr?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- BUSINESS STUDIES -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-briefcase fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">BUSINESS STUDIES</h3>
-                <p class="small text-muted">Units 1 - 4</p>
-                <a href="https://drive.google.com/drive/folders/16KHZycp_py0tQxCENAlT6lywCwO1M-W0?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-briefcase fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">BUSINESS STUDIES</h3>
+                <p class="small text-muted mb-4">Units 1 - 4 Resources</p>
+                <a href="https://drive.google.com/drive/folders/16KHZycp_py0tQxCENAlT6lywCwO1M-W0?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- ACCOUNTING -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-file-invoice-dollar fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">ACCOUNTING</h3>
-                <p class="small text-muted">Units 1 - 4</p>
-                <a href="https://drive.google.com/drive/folders/1CBi8AwIuOirxVhsbb5KPeo6lV33pRUl7?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-file-invoice-dollar fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">ACCOUNTING</h3>
+                <p class="small text-muted mb-4">Units 1 - 4 Resources</p>
+                <a href="https://drive.google.com/drive/folders/1CBi8AwIuOirxVhsbb5KPeo6lV33pRUl7?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- LAW -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-gavel fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">LAW</h3>
-                <p class="small text-muted">Units 1 - 4</p>
-                <a href="https://drive.google.com/drive/folders/1iihPMkQJtO9MvSPMtMLaOOwl3eQcSnUN?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-gavel fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">LAW</h3>
+                <p class="small text-muted mb-4">Units 1 - 4 Resources</p>
+                <a href="https://drive.google.com/drive/folders/1iihPMkQJtO9MvSPMtMLaOOwl3eQcSnUN?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- PSYCHOLOGY -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-brain fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">PSYCHOLOGY</h3>
-                <p class="small text-muted">Units 1 - 4</p>
-                <a href="https://drive.google.com/drive/folders/1W2pLzSet35iMpPe2AA6KJ6b3l6IlQqfx?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-brain fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">PSYCHOLOGY</h3>
+                <p class="small text-muted mb-4">Units 1 - 4 Resources</p>
+                <a href="https://drive.google.com/drive/folders/1W2pLzSet35iMpPe2AA6KJ6b3l6IlQqfx?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- MECHANICS -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-cogs fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">MECHANICS</h3>
-                <p class="small text-muted">M1, M2, M3</p>
-                <a href="https://drive.google.com/drive/folders/1sFhhtx81j5O2kcxxZ8hPvk7ty6FbNDGh?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-cogs fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">MECHANICS</h3>
+                <p class="small text-muted mb-4">M1, M2, M3 Modules</p>
+                <a href="https://drive.google.com/drive/folders/1sFhhtx81j5O2kcxxZ8hPvk7ty6FbNDGh?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- STATISTICS -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-chart-bar fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">STATISTICS</h3>
-                <p class="small text-muted">S1, S2, S3</p>
-                <a href="https://drive.google.com/drive/folders/1RMbKMa1JiGk_KeNmsShKT1rgFZnRJzy2?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-chart-bar fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">STATISTICS</h3>
+                <p class="small text-muted mb-4">S1, S2, S3 Modules</p>
+                <a href="https://drive.google.com/drive/folders/1RMbKMa1JiGk_KeNmsShKT1rgFZnRJzy2?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
 
+        <!-- FURTHER PURE -->
         <div class="col-md-6 col-lg-4">
-            <div class="mech-card h-100 p-4 text-center">
-                <i class="fas fa-square-root-variable fa-3x text-secondary mb-3"></i>
-                <h3 class="h4">FURTHER PURE</h3>
-                <p class="small text-muted">FP1, FP2, FP3</p>
-                <a href="https://drive.google.com/drive/folders/1ruIBYNrD6tGuJAmWZhe_pTueHHMW81AY?usp=sharing" target="_blank" class="btn btn-outline-primary w-100 mt-2">
-                    <i class="fab fa-google-drive me-2"></i> OPEN DRIVE
+            <div class="mech-card p-4 text-center h-100">
+                <i class="fas fa-square-root-variable fa-3x subject-icon mb-3"></i>
+                <h3 class="h4 fw-bold">FURTHER PURE</h3>
+                <p class="small text-muted mb-4">FP1, FP2, FP3 Modules</p>
+                <a href="https://drive.google.com/drive/folders/1ruIBYNrD6tGuJAmWZhe_pTueHHMW81AY?usp=sharing" target="_blank" class="btn drive-link-btn w-100">
+                    <i class="fab fa-google-drive me-2"></i> ACCESS DRIVE
                 </a>
             </div>
         </div>
