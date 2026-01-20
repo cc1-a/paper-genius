@@ -1,8 +1,7 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, session, g, make_response
+from flask import Flask, render_template, request, redirect, url_for, session, g, make_response, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
 from functools import wraps
 from flask_migrate import Migrate
 import cloudinary
@@ -21,7 +20,11 @@ load_dotenv()
 app = Flask(__name__)
 app.register_blueprint(ai_bp)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///database.db')
+database_url = os.getenv('DATABASE_URL', 'sqlite:///database.db')
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.getenv('SECRET_KEY')
 
@@ -319,10 +322,6 @@ def delete_user(user_id):
         db.session.commit()
     return redirect(url_for('admin_users'))
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
-
 @app.route("/admin/add_item", methods=["GET", "POST"])
 @admin_required
 def add_item():
@@ -381,6 +380,69 @@ def edit_item(item_id):
     years_list = list(item.years_available.items())
     return render_template('/admin/edit_item.html', item=item, years_list=years_list)
 
+@app.route('/api/admin/sync_inventory', methods=['POST'])
+def sync_inventory_api():
+    secret = request.headers.get('X-Sync-Secret')
+    required_secret = os.getenv('SYNC_SECRET_KEY')
+    
+    if secret != required_secret:
+        return jsonify({'error': 'Unauthorized access'}), 401
+
+    data = request.json
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+
+    updated_count = 0
+    created_count = 0
+
+    try:
+        for entry in data:
+            item_name = entry.get('name')
+            new_years_data = entry.get('years')
+
+            if not item_name or not new_years_data:
+                continue
+
+            item = db.session.execute(db.select(items).filter(items.name.ilike(item_name))).scalar_one_or_none()
+
+            if item:
+                item.years_available = new_years_data
+                updated_count += 1
+            else:
+                new_item = items(
+                    name=item_name,
+                    img="https://placehold.co/400x600?text=No+Image",
+                    years_available=new_years_data
+                )
+                db.session.add(new_item)
+                created_count += 1
+
+        db.session.commit()
+        return jsonify({
+            'status': 'success', 
+            'message': f'Synced successfully. Updated: {updated_count}, Created: {created_count}'
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/get_all_items', methods=['GET'])
+def get_all_items_api():
+    secret = request.headers.get('X-Sync-Secret')
+    required_secret = os.getenv('SYNC_SECRET_KEY')
+    
+    if secret != required_secret:
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    try:
+        all_items = db.session.execute(db.select(items)).scalars().all()
+        item_list = [{"id": i.id, "name": i.name} for i in all_items]
+        
+        return jsonify({'items': item_list})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route("/About")
 def about(): return render_template("about.html")
 
@@ -403,5 +465,11 @@ def product_detail(item_id):
         return redirect(url_for('shop'))
     return render_template("product_detail.html", item=item_obj)
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=False, host='0.0.0.0')
