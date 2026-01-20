@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 
-<!-- 1. DYNAMIC SEO DATA -->
-{% block title %}{{ item.name }} | Edexcel Past Paper Book Sri Lanka | Paper Genius{% endblock %}
-{% block description %}Get the printed {{ item.name }} past paper book (2019-2024). Customized covers and high-quality spiral binding. Island-wide delivery in Sri Lanka.{% endblock %}
+{% block title %}Buy {{ item.name }} Past Paper Book (Edexcel/Pearson) - Paper Genius Sri Lanka{% endblock %}
+{% block description %}Order the {{ item.name }} printed past paper book (2019-2025). Full syllabus coverage, spiral bound, high-quality printing. Lowest price in Sri Lanka. Cash on Delivery available.{% endblock %}
 
 {% block head %}
-<!-- 2. OPEN GRAPH -->
 <meta property="og:title" content="{{ item.name }} - Premium Past Paper Books">
 <meta property="og:description" content="Order your custom {{ item.name }} resource. Fast delivery in Sri Lanka.">
 <meta property="og:image" content="{{ item.img if item.img.startswith('http') else url_for('static', filename=item.img, _external=True) }}">
@@ -20,7 +18,6 @@
     .magnify-container img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.1s ease-out; transform-origin: center center; }
     .product-info { flex: 1; min-width: 320px; }
     
-    /* PRICE BOX STYLE */
     .price-display {
         background: rgba(var(--accent-rgb), 0.05); 
         border: 2px solid var(--accent); 
@@ -48,7 +45,6 @@
     </nav>
 
     <div class="product-container">
-        <!-- IMAGE SECTION -->
         <div class="product-visual">
             <div class="magnify-container" id="zoom-box">
                 {% if item.img.startswith('http') %}
@@ -59,7 +55,6 @@
             </div>
         </div>
 
-        <!-- DETAILS SECTION -->
         <div class="product-info">
             <div class="mech-panel" style="padding: 30px;">
                 <span class="badge bg-success mb-2" style="letter-spacing: 2px;">AUTHENTIC RESOURCE</span>
@@ -71,7 +66,6 @@
                     <div class="mb-3">
                         <label class="mech-label">COVER SPECIFICATION</label>
                         <select name="cover_type" id="cover-select" class="mech-input" required>
-                            <!-- Cleaned up labels as requested -->
                             <option value="Normal">Normal Cover</option>
                             <option value="Custom">Custom Design</option>
                             <option value="Minimalistic">Minimalistic (Clear)</option>
@@ -97,7 +91,6 @@
                         </div>
                     </div>
 
-                    <!-- DYNAMIC PRICE DISPLAY -->
                     <div class="price-display">
                         <h6 class="text-muted mb-1" style="font-family: 'Rajdhani'; letter-spacing: 1px;">ESTIMATED TOTAL</h6>
                         <h2 class="mb-0 fw-bold text-success" style="font-family: 'Rajdhani';">
@@ -123,26 +116,44 @@
     </div>
 </div>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ item.name }} Past Paper Book",
+  "image": [
+    "{{ item.img }}"
+  ],
+  "description": "Printed Edexcel {{ item.name }} past papers. Available years: {{ item.years_available.keys()|list|join(', ') }}.",
+  "brand": {
+    "@type": "Brand",
+    "name": "Edexcel"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ request.url }}",
+    "priceCurrency": "LKR",
+    "price": "2000.00", 
+    "priceValidUntil": "2026-12-31",
+    "availability": "https://schema.org/InStock",
+    "itemCondition": "https://schema.org/NewCondition"
+  }
+}
+</script>
+
 <script>
-    // --- 1. DATA FROM FLASK (Page Counts) ---
-    // This injects the database dictionary directly into JS code
     const yearsData = {{ item.years_available | tojson }};
-    // Get keys sorted alphabetically to match the HTML select order (Start/End years)
     const sortedYears = Object.keys(yearsData).sort();
 
-    // --- 2. ELEMENTS ---
     const coverSelect = document.getElementById('cover-select');
     const fromSelect = document.getElementById('from-select');
     const toSelect = document.getElementById('to-select');
     const priceDisplay = document.getElementById('dynamic-price');
 
-    // --- 3. PRICING LOGIC ---
     function updatePrice() {
-        // A. Prevent Invalid Dates
         const startIndex = fromSelect.selectedIndex;
         const endIndex = toSelect.selectedIndex;
 
-        // Loop through End Year options to disable past dates
         for (let i = 0; i < toSelect.options.length; i++) {
             if (i < startIndex) {
                 toSelect.options[i].disabled = true;
@@ -153,40 +164,29 @@
             }
         }
 
-        // Auto-correct End Year if it's before Start Year
         if (toSelect.selectedIndex < startIndex) {
             toSelect.selectedIndex = startIndex;
         }
 
-        // B. Calculate Price
-        // 1. Calculate Total Pages based on selected range
         let totalPages = 0;
-        // Loop from Start Index to End Index (inclusive) using the sorted keys
         for (let i = startIndex; i <= toSelect.selectedIndex; i++) {
             let yearKey = sortedYears[i];
-            // Add pages for this year (default to 0 if missing)
             totalPages += (yearsData[yearKey] || 0);
         }
 
-        // 2. Determine Cover Cost
         const coverType = coverSelect.value;
-        let coverCost = 200; // Normal
+        let coverCost = 200;
         if (coverType === 'Custom') coverCost = 500;
         if (coverType === 'Minimalistic') coverCost = 80;
 
-        // 3. Formula: (Pages * 5) + 400 Binding + Cover
         const finalPrice = (totalPages * 5.0) + 400.0 + coverCost;
-
-        // C. Update UI
         priceDisplay.innerText = finalPrice.toFixed(2);
     }
 
-    // --- 4. EVENT LISTENERS ---
     fromSelect.addEventListener('change', updatePrice);
     toSelect.addEventListener('change', updatePrice);
     coverSelect.addEventListener('change', updatePrice);
 
-    // --- 5. ZOOM LOGIC ---
     const zoomBox = document.getElementById('zoom-box');
     const mainImg = document.getElementById('main-img');
 
@@ -203,7 +203,6 @@
         mainImg.style.transformOrigin = "center center";
     });
 
-    // Run once on load
     updatePrice();
 </script>
 {% endblock %}
