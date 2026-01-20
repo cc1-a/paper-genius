@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-<!-- 1. DYNAMIC SEO DATA FOR GOOGLE -->
+<!-- 1. DYNAMIC SEO DATA -->
 {% block title %}{{ item.name }} | Edexcel Past Paper Book Sri Lanka | Paper Genius{% endblock %}
 {% block description %}Get the printed {{ item.name }} past paper book (2019-2024). Customized covers and high-quality spiral binding. Island-wide delivery in Sri Lanka.{% endblock %}
 
 {% block head %}
-<!-- 2. OPEN GRAPH FOR WHATSAPP/SOCIAL SHARING -->
+<!-- 2. OPEN GRAPH -->
 <meta property="og:title" content="{{ item.name }} - Premium Past Paper Books">
 <meta property="og:description" content="Order your custom {{ item.name }} resource. Fast delivery in Sri Lanka.">
 <meta property="og:image" content="{{ item.img if item.img.startswith('http') else url_for('static', filename=item.img, _external=True) }}">
@@ -36,6 +36,7 @@
     </nav>
 
     <div class="product-container">
+        <!-- IMAGE SECTION -->
         <div class="product-visual">
             <div class="magnify-container" id="zoom-box">
                 {% if item.img.startswith('http') %}
@@ -46,6 +47,7 @@
             </div>
         </div>
 
+        <!-- DETAILS SECTION -->
         <div class="product-info">
             <div class="mech-panel" style="padding: 30px;">
                 <span class="badge bg-success mb-2" style="letter-spacing: 2px;">AUTHENTIC RESOURCE</span>
@@ -66,8 +68,8 @@
                     <div class="row g-2 mb-4">
                         <div class="col-6">
                             <label class="mech-label">START YEAR</label>
+                            <!-- The list is sorted chronologically by Python before rendering -->
                             <select name="selected_year_from" id="from-select" class="mech-input" required>
-                                <option value="" disabled selected>Year</option>
                                 {% for year in item.years_available.keys()|sort %}
                                     <option value="{{ year }}">{{ year }}</option>
                                 {% endfor %}
@@ -76,7 +78,6 @@
                         <div class="col-6">
                             <label class="mech-label">END YEAR</label>
                             <select name="selected_year_to" id="to-select" class="mech-input" required>
-                                <option value="" disabled selected>Year</option>
                                 {% for year in item.years_available.keys()|sort %}
                                     <option value="{{ year }}">{{ year }}</option>
                                 {% endfor %}
@@ -103,6 +104,7 @@
 </div>
 
 <script>
+    // --- 1. ZOOM LOGIC ---
     const zoomBox = document.getElementById('zoom-box');
     const mainImg = document.getElementById('main-img');
 
@@ -119,20 +121,39 @@
         mainImg.style.transformOrigin = "center center";
     });
 
+    // --- 2. DATE LOGIC (Prevents selecting past dates) ---
     const fromSelect = document.getElementById('from-select');
     const toSelect = document.getElementById('to-select');
 
-    fromSelect.addEventListener('change', () => {
-        const fromVal = fromSelect.value;
-        Array.from(toSelect.options).forEach(opt => {
-            if(opt.value && opt.value < fromVal) {
-                opt.disabled = true;
-                opt.style.opacity = '0.3';
+    function updateEndOptions() {
+        // Get the index of the selected start option (e.g., 0 for the first year, 5 for the 6th year)
+        const startIndex = fromSelect.selectedIndex;
+        
+        // Loop through all options in the "End Year" dropdown
+        for (let i = 0; i < toSelect.options.length; i++) {
+            if (i < startIndex) {
+                // Disable years BEFORE the start year
+                toSelect.options[i].disabled = true;
+                toSelect.options[i].style.color = '#ccc'; // Grey out
             } else {
-                opt.disabled = false;
-                opt.style.opacity = '1';
+                // Enable years AFTER or EQUAL to start year
+                toSelect.options[i].disabled = false;
+                toSelect.options[i].style.color = 'var(--text-primary)';
             }
-        });
-    });
+        }
+
+        // AUTO-CORRECT: 
+        // If the current "End Year" is earlier than the new "Start Year", 
+        // automatically push the "End Year" forward to match the "Start Year".
+        if (toSelect.selectedIndex < startIndex) {
+            toSelect.selectedIndex = startIndex;
+        }
+    }
+
+    // Run when Start Year changes
+    fromSelect.addEventListener('change', updateEndOptions);
+
+    // Run once on page load to initialize correctly
+    updateEndOptions();
 </script>
 {% endblock %}
