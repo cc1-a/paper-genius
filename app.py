@@ -66,7 +66,9 @@ def robots():
     response = make_response("User-agent: *\nAllow: /\n\nSitemap: https://papergenius.vercel.app/sitemap.xml")
     response.headers["Content-Type"] = "text/plain"
     return response
-
+@app.route("/Resources")
+def resources():
+    return render_template("resources.html")
 @app.route('/sitemap.xml')
 def sitemap():
     try:
